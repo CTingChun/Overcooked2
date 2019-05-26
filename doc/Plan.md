@@ -42,6 +42,17 @@
 - Input: Js 物件建構，只是一個控制器，各個 Function 獨立
 - Implementation Detail: Below
 
+##### DB 路徑定義
+
+|- rooms(collection)
+|---- [room_id](doc)
+|------- game
+|---------- To be Added.
+|------- player1(collection)
+|---------- [key](doc)
+|------- player2(collection)
+|---------- [key](doc)
+
 ##### Class 物件定義
 
 ```js
@@ -66,12 +77,12 @@ let connector = new Connector('[roomId]', '[playerId]');
 
 ```js
 /**
-  @name addToDB
-  @param { Phaser.Sprite, Any } object, 任何要記錄的物件
-  @param { Array } attritubes, 一個包含要記錄的資訊名稱，格式為 ['alive', 'body.velocity.x'] 等等，相對物件用 . 隔開
-  @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
-*/
-function addToDB(object, attributes);
+    @name addToDB
+    @param { String } key, 用在 DB 路徑
+    @param { Phaser.Sprite, Any } object, 任何要記錄的物件
+    @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
+  */
+  function addToDB(key, object);
 ```
 
 ## 相關文件連結
