@@ -15,7 +15,6 @@ class ProxyHandler extends ConnectBase {
     if (target.hasOwnProperty(property) && typeof target[property] === 'object') {
       // 1-1 Check If Need To Add A Proxy
       if (typeof target[property][this.proxyName] === 'undefined') {
-        console.log('add Proxy')
         // 1-1-1 Add New Proxy
         target[property][this.proxyName] = Proxy.revocable(target[property], this);
 
@@ -53,7 +52,6 @@ class ProxyHandler extends ConnectBase {
       target[property] = value;
     } else {
       // 3-1-2 Update To Firebase
-      console.log('to DB');
     }
   }
 }
