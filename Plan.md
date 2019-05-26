@@ -56,9 +56,11 @@ class Connector {
 let connector = new Connector('[roomId]', '[playerId]');
 ```
 
+##### addToDB()
+
 ```js
 /**
-  @name updateToDB
+  @name addToDB
   @param { Phaser.Sprite, Any } object, 任何要記錄的物件
   @param { Array } attritubes, 一個包含要記錄的資訊名稱，格式為 ['alive', 'body.velocity.x'] 等等，相對物件用 . 隔開
   @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
