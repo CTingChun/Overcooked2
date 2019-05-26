@@ -1,5 +1,11 @@
 # 軟實 Final Project 計畫
 
+## 開發流程
+
+- 可以直接使用 Firefox，想用 Chrome 可以先 npm install，然後再打 npm run serve，點開裡面寫的網址(記得在 Chrome dev tool 裡的 network 打開 `Disable cache`)
+
+![Disable Cache]('images/disable-cache.png')
+
 ## Game Flow 遊戲流程
 
 整體遊戲相關進程，根據 Phaser 特性([State](https://photonstorm.github.io/phaser-ce/Phaser.State.html))來定義遊戲進程。
