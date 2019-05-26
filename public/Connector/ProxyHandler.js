@@ -1,6 +1,8 @@
 // Public
 class ProxyHandler extends ConnectBase {
   constructor(proxyName, type) {
+    super();
+    
     // Init Variable
     this.proxyName = proxyName;
     this.type = type;

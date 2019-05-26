@@ -7,6 +7,8 @@ class Connector extends ConnectBase {
     @param { String } playerId, 玩家獨有 ID，用在辨別 DB 位置
   */
   constructor(roomId, playerId) {
+    super();
+
     this.roomId = roomId;
     this.playerId = playerId;
   }
@@ -41,9 +43,9 @@ class Connector extends ConnectBase {
     for (let prop in object) {
       // 1-1 Filter Out Property In Prototype. 
       if (object.hasOwnProperty(prop)) {
-        // 2-1 Check If Is Object and not a Array
-        if (typeof object[prop] === 'object' && ! Array.isArray(object[prop])) {
-          this.removePreviousAddedProxy(object[prop]);
+        // 2-1 Check If Is Object and not a Array and not proxy object
+        if (typeof object[prop] === 'object' && ! Array.isArray(object[prop]) && prop !== `custom${key}Proxy`) {
+          this.removePreviousAddedProxy(key, object[prop]);
         }
       } else {
         continue;
