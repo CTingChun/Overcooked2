@@ -4,7 +4,7 @@
 
 - 可以直接使用 Firefox，想用 Chrome 可以先 npm install，然後再打 npm run serve，點開裡面寫的網址(記得在 Chrome dev tool 裡的 network 打開 `Disable cache`)
 
-![Disable Cache]('images/disable-cache.png')
+![Disable Cache](images/disable-cache.png)
 
 ## Game Flow 遊戲流程
 
