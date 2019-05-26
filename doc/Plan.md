@@ -48,10 +48,8 @@
 |---- [room_id](doc)
 |------- game
 |---------- To be Added.
-|------- player1(collection)
-|---------- [key](doc)
-|------- player2(collection)
-|---------- [key](doc)
+|------- player1(doc)
+|------- player2(doc)
 
 ##### Class 物件定義
 
