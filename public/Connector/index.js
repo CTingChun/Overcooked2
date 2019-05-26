@@ -22,14 +22,23 @@ class Connector extends ConnectBase {
     Will Add Two Property on object:
     sendingInfo: Object
     dbEventListener: Listener
+    custom[Key]Proxy: proxy
   */
-  addToDB(key, object, type="Sprite") {
+  addToDB(key, object, type='sprite') {
     let func = async (res, rej) => {
       // 1-1 Remove Previous Event Handler If exist on Object.
+      if (typeof object.dbEventListner !== 'undefined') object.dbEventListner();
+
       // 1-2 Revoke Previous Add Proxy If exist on Object.
+      if (typeof object[`custom${key}Proxy`] !== 'undefined') this.removePreviousAddedProxy(key, object);
+
       // 1-3 Create Proxy Object.
+      object[`custom${key}Proxy`] = Proxy.revocable(object, new ProxyHandler(null, `custom${key}Proxy`, type));
+
       // 1-4 Create DB Data Structure.
       // 1-5 Add DB Event Handler (Use Original Object to Avoid Loop Update).
+      // 1-6 Resolve and return proxy.
+      res(object[`custom${key}Proxy`].proxy);
     };
     return new Promise(func);
   }
@@ -37,6 +46,7 @@ class Connector extends ConnectBase {
   // Private
   /**
    * @private
+   * @param { String } key, Name Of Key
    * @param { * } object 
    */
   removePreviousAddedProxy(key, object) {

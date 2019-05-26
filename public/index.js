@@ -12,23 +12,12 @@ firebase.initializeApp({
 
 var connector = new Connector('roomId', 'playerId');
 
-// var test = {
-//   body: {
-//     a: 1,
-//     b: 2
-//   },
-//   c: 2,
-//   d: 4
-// }
-
-// var validator = {
-//   set(target, property, value) {
-//     console.log('value: ' + value);
-//     target[property] = value;
-//     return true;
-//   }
-// }
-// test.body.customTestProxy = Proxy.revocable(test.body, validator);
-// test.customTestProxy = Proxy.revocable(test, validator);
-// var bodyProxy = test.body.customTestProxy.proxy;
-// var testProxy = test.customTestProxy.proxy;
+var test = {
+  body: {
+    a: 1,
+    b: 2
+  },
+  c: 2,
+  d: 4,
+  e: 0
+}

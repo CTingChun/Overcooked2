@@ -2,8 +2,14 @@
 class ConnectBase {
   constructor() {
     // Setup Default Record Attribute
-    this.SpriteAttribute = [
-      'alive'
+    this.SpriteMap = [
+      'c',
+      'd'
     ];
+
+    this.SpriteBodyMap = [
+      'a',
+      'b'
+    ]
   }
 }
