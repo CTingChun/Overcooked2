@@ -1,5 +1,5 @@
 // Connector Class
-class Connector extends ConnectBase {
+class Connector {
   /** 
     Construct A Connect
     @constructor
@@ -42,7 +42,7 @@ class Connector extends ConnectBase {
     dbEventListener: Listener
     custom[Key]Proxy: proxy
   */
-  addToDB(key, object, type='sprite') {
+  addToDB(key, object) {
     let func = async (res, rej) => {
       // 1-1 Remove Previous Event Handler If exist on Object.
       if (typeof object.dbEventListner !== 'undefined') object.dbEventListner();
@@ -54,7 +54,7 @@ class Connector extends ConnectBase {
 
       // 1-3 Create Proxy Object if Needed.
       if (typeof object[`custom${key}Proxy`] === 'undefined') {
-        object[`custom${key}Proxy`] = Proxy.revocable(object, new ProxyHandler(this.db, key, type));
+        object[`custom${key}Proxy`] = Proxy.revocable(object, new ProxyHandler(this.db, key));
       }
 
       // 1-4 Add DB Event Handler (Use Original Object to Avoid Loop Update).
@@ -76,6 +76,11 @@ class Connector extends ConnectBase {
     return new Promise(func);
   }
 
+  /**
+   * @name removeLinkToDB
+   * @param { String } key 
+   * @param { Object } originalObject 
+   */
   removeLinkToDB(key, originalObject) {
     this.removePreviousAddedProxy(key, originalObject);
   }

@@ -73,16 +73,36 @@ class Connector {
 let connector = new Connector('[roomId]', '[playerId]');
 ```
 
+##### createRoom()
+
+```js
+/** 
+ * @return { Promise, String } roomId
+*/
+static function createRoom()
+```
+
 ##### addToDB()
 
 ```js
 /**
-    @name addToDB
-    @param { String } key, 用在 DB 路徑
-    @param { Phaser.Sprite, Any } object, 任何要記錄的物件
-    @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
-  */
-  function addToDB(key, object);
+  @name addToDB
+  @param { String } key, 用在 DB 路徑
+  @param { Phaser.Sprite, Any } object, 任何要記錄的物件
+  @return { Promise, Proxy }, 之前透過 object 傳進來的物件的 Proxy
+*/
+function addToDB(key, object);
+```
+
+##### removeLinkToDB
+
+```js
+/**
+  * @name removeLinkToDB
+  * @param { String } key 
+  * @param { Object } originalObject 
+*/
+function removeLinkToDB(key, originalObject);
 ```
 
 ## 相關文件連結
