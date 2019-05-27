@@ -76,6 +76,11 @@ class Connector {
     return new Promise(func);
   }
 
+  /**
+   * @name removeLinkToDB
+   * @param { String } key 
+   * @param { Object } originalObject 
+   */
   removeLinkToDB(key, originalObject) {
     this.removePreviousAddedProxy(key, originalObject);
   }
