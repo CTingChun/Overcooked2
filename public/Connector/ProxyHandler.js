@@ -1,13 +1,12 @@
 // Public
-class ProxyHandler extends ConnectBase {
-  constructor(db, key, type) {
+class ProxyHandler {
+  constructor(db, key) {
     super();
     
     // Init Variable
     this.db = db;
     this.key = key;
     this.proxyName = `custom${key}Proxy`;
-    this.type = type;
   }
 
   // Get Handler
@@ -51,29 +50,10 @@ class ProxyHandler extends ConnectBase {
 
   // Set Handler
   set(target, property, value) {
-    // 1 Variable Definition
-    let isPass = true;
-
-    // 1-1 Check If Have PropertyMap Defined On it
-    if (typeof target.propertyMap !== 'undefined') {
-      // 1-1-1 Check is to pass to original object based on map
-      if (target.propertyMap === 'body' && this.SpriteBodyMap.includes(property)) isPass = false;
-    }
-    // 2-1 Is Main Object
-    else {
-      // 2-1-1 Check Is to pass to original object based on type.
-      if (this.type === 'sprite' && this.SpriteMap.includes(property)) isPass = false;
-    }
-
-    // 3-1 isPass or to DB
-    if (isPass) {
-      // 3-1-1 Update To target
-      target[property] = value;
-    } else {
-      // 3-1-2 Update To Firebase
-      this.db.doc(target.DBDocName).update({
-        [property]: value
-      });
-    }
+    // 3-1-2 Update To Firebase
+    this.db.doc(target.DBDocName).update({
+      [property]: value
+    });
+    return true;
   }
 }
