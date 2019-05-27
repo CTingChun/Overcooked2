@@ -15,13 +15,28 @@ class Connector extends ConnectBase {
     // Init DB
     this.db = firebase.firestore().collection('rooms').doc(this.roomId).collection(`player-${this.playerId}`);
   }
+  // Static Function
+  static createRoom() {
+    let func = async (res, rej) => {
+      // 1-1 Create Collection
+      let room = await firebase.firestore().collection('rooms').add({
+        _init: 1
+      });
+
+      // 1-2 Resove With Roomid
+      res(room.id);
+    };
+
+    // 2-1 return promise
+    return new Promise(func);
+  }
 
   // Public Function
   /**
     @name addToDB
     @param { String } key, 用在 DB 路徑
     @param { Phaser.Sprite, Any } object, 任何要記錄的物件
-    @return { Proxy }, 之前透過 object 傳進來 object 建成的的 Proxy 物件
+    @return { Promise }, 之前透過 object 傳進來 object 建成的的 Proxy 物件
     Will Add Two Property on object:
     sendingInfo: Object
     dbEventListener: Listener

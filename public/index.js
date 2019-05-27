@@ -9,16 +9,3 @@ firebase.initializeApp({
   messagingSenderId: "1054701344101",
   appId: "1:1054701344101:web:6c05d13497ea57d5"
 });
-
-var connector = new Connector('OQvkPJXO27NJMUVY6SO4', '1');
-
-var test = {
-  body: {
-    a: 1,
-    b: 2,
-    f: 32
-  },
-  c: 2,
-  d: 4,
-  e: 0
-}
