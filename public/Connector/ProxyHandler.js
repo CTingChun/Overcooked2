@@ -1,11 +1,12 @@
 // Public
 class ProxyHandler extends ConnectBase {
-  constructor(db, proxyName, type) {
+  constructor(db, key, type) {
     super();
     
     // Init Variable
     this.db = db;
-    this.proxyName = proxyName;
+    this.key = key;
+    this.proxyName = `custom${key}Proxy`;
     this.type = type;
   }
 
@@ -20,6 +21,24 @@ class ProxyHandler extends ConnectBase {
 
         // 1-1-2 Add Map Type
         target[property].propertyMap = property;
+
+        // Add Doc To DB
+        this.db.doc(`${this.key}-${property}`).set({
+          '_init': 1
+        });
+
+        // Add Event Listner
+        target[property].dbEventListner = this.db.doc(`${this.key}-${property}`).onSnapshot((doc) => {
+          // Extract Data
+          let data = doc.data();
+          if (typeof data._init !== 'undefined') delete data._init;
+
+          // Assign to Original target
+          Object.assign(target[property], data);
+        });
+
+        // Add Doc Name
+        target[property].DBDocName = `${this.key}-${property}`;
       }
 
       // 1-2 Return Proxy
@@ -52,6 +71,9 @@ class ProxyHandler extends ConnectBase {
       target[property] = value;
     } else {
       // 3-1-2 Update To Firebase
+      this.db.doc(target.DBDocName).update({
+        [property]: value
+      });
     }
   }
 }
