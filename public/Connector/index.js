@@ -7,8 +7,6 @@ class Connector {
     @param { String } playerId, 玩家獨有 ID，用在辨別 DB 位置
   */
   constructor(roomId, playerId) {
-    super();
-
     this.roomId = roomId;
     this.playerId = playerId;
 

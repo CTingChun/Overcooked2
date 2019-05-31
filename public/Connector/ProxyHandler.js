@@ -1,8 +1,6 @@
 // Public
 class ProxyHandler {
   constructor(db, key) {
-    super();
-    
     // Init Variable
     this.db = db;
     this.key = key;
