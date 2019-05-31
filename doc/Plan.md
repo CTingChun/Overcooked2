@@ -6,6 +6,24 @@
 
 ![Disable Cache](images/disable-cache.png)
 
+- 只要有人更新時，可以打以下指令做更新
+```zsh
+# 懶得打指令也可以用 vscode 做到
+# 先把目前做的東西變成一個 commit
+git add .;
+git commit -m "[message]";
+
+# 切換到 dev 更新
+git checkout dev;
+git pull;
+
+# 切回自己的 branch (以君君的 branch 為例，改成自己的 branch)
+git checkout claire;
+git merge --no-ff dev;
+
+# 然後接下來退出 vim 的方法：Shift + :鍵
+```
+
 ## Game Flow 遊戲流程
 
 整體遊戲相關進程，根據 Phaser 特性([State](https://photonstorm.github.io/phaser-ce/Phaser.State.html))來定義遊戲進程。
