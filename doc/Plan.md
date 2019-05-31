@@ -6,6 +6,24 @@
 
 ![Disable Cache](images/disable-cache.png)
 
+- 只要有人更新時，可以打以下指令做更新
+```zsh
+# 懶得打指令也可以用 vscode 做到
+# 先把目前做的東西變成一個 commit
+git add .;
+git commit -m "[message]";
+
+# 切換到 dev 更新
+git checkout dev;
+git pull;
+
+# 切回自己的 branch (以君君的 branch 為例，改成自己的 branch)
+git checkout claire;
+git merge --no-ff dev;
+
+# 然後接下來退出 vim 的方法：Shift + :鍵
+```
+
 ## Game Flow 遊戲流程
 
 整體遊戲相關進程，根據 Phaser 特性([State](https://photonstorm.github.io/phaser-ce/Phaser.State.html))來定義遊戲進程。
@@ -46,6 +64,17 @@
 - Input: Js 物件建構，只是一個控制器，各個 Function 獨立
 - Implementation Detail: Below
 
+##### DB 路徑定義
+
+|- rooms(collection)
+|---- [room_id](doc)
+|------- game
+|---------- To be Added.
+|------- player-[playerId] (collection)
+|---------- character(doc)
+|------- player-[playerId] (collection)
+|---------- character(doc)
+
 ##### Class 物件定義
 
 ```js
@@ -66,16 +95,36 @@ class Connector {
 let connector = new Connector('[roomId]', '[playerId]');
 ```
 
+##### createRoom()
+
+```js
+/** 
+ * @return { Promise, String } roomId
+*/
+static function createRoom()
+```
+
 ##### addToDB()
 
 ```js
 /**
   @name addToDB
+  @param { String } key, 用在 DB 路徑
   @param { Phaser.Sprite, Any } object, 任何要記錄的物件
-  @param { Array } attritubes, 一個包含要記錄的資訊名稱，格式為 ['alive', 'body.velocity.x'] 等等，相對物件用 . 隔開
-  @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
+  @return { Promise, Proxy }, 之前透過 object 傳進來的物件的 Proxy
 */
-function addToDB(object, attributes);
+function addToDB(key, object);
+```
+
+##### removeLinkToDB
+
+```js
+/**
+  * @name removeLinkToDB
+  * @param { String } key 
+  * @param { Object } originalObject 
+*/
+function removeLinkToDB(key, originalObject);
 ```
 
 ## 相關文件連結
