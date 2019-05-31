@@ -33,6 +33,10 @@
 
 下面會列出每個 State 裡該有的功能，以及其功能細部需求。以功能分類
 
+### 設定
+
+視窗大小：1280 * 720
+
 ### Main Game 遊戲主體邏輯
 
 #### 多人連線模組
@@ -41,6 +45,17 @@
 - Implementation: 有一個連接器，可以加入 firebase realtime update，並且在物件刪除時一並刪除 Callback
 - Input: Js 物件建構，只是一個控制器，各個 Function 獨立
 - Implementation Detail: Below
+
+##### DB 路徑定義
+
+|- rooms(collection)
+|---- [room_id](doc)
+|------- game
+|---------- To be Added.
+|------- player-[playerId] (collection)
+|---------- character(doc)
+|------- player-[playerId] (collection)
+|---------- character(doc)
 
 ##### Class 物件定義
 
@@ -62,16 +77,36 @@ class Connector {
 let connector = new Connector('[roomId]', '[playerId]');
 ```
 
+##### createRoom()
+
+```js
+/** 
+ * @return { Promise, String } roomId
+*/
+static function createRoom()
+```
+
 ##### addToDB()
 
 ```js
 /**
   @name addToDB
+  @param { String } key, 用在 DB 路徑
   @param { Phaser.Sprite, Any } object, 任何要記錄的物件
-  @param { Array } attritubes, 一個包含要記錄的資訊名稱，格式為 ['alive', 'body.velocity.x'] 等等，相對物件用 . 隔開
-  @return { Phaser.Sprite, Any }, 之前透過 object 傳進來的物件
+  @return { Promise, Proxy }, 之前透過 object 傳進來的物件的 Proxy
 */
-function addToDB(object, attributes);
+function addToDB(key, object);
+```
+
+##### removeLinkToDB
+
+```js
+/**
+  * @name removeLinkToDB
+  * @param { String } key 
+  * @param { Object } originalObject 
+*/
+function removeLinkToDB(key, originalObject);
 ```
 
 ## 相關文件連結
