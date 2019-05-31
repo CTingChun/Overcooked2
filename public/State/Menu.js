@@ -6,10 +6,15 @@ class Menu extends Phaser.State {
 
   preload() {
     // Preload Hook, 載入資料
+    this.game.load.image('bg', '../assets/.png');
+    this.game.load.image('word', '../assets/overcooked.png');
   }
 
   create() {
     // Create Hook, 對這個 State 做 Init
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.bg = game.add.tileSprite(0, 0, 1280, 720, 'bg');
+    this.word = game.add.image(0, 0, 'word');
   }
 
   update() {
