@@ -6,7 +6,7 @@ class Menu extends Phaser.State {
 
   preload() {
     // Preload Hook, 載入資料
-    this.game.load.image('bg', '../assets/.png');
+    this.game.load.image('bg', '../assets/background.png');
     this.game.load.image('word', '../assets/overcooked.png');
   }
 
