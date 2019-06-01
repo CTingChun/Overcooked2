@@ -1,0 +1,14 @@
+{
+  "name": "gameserver",
+  "version": "1.0.0",
+  "description": "Game Server For Our Phaser Game",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^2.2.0"
+  }
+}
