@@ -64,6 +64,8 @@ git merge --no-ff dev;
 - Input: Js 物件建構，只是一個控制器，各個 Function 獨立
 - Implementation Detail: Below
 
+#### Connector V1.0 (Functionality Implemented With Firebase)
+
 ##### DB 路徑定義
 
 |- rooms(collection)
@@ -131,3 +133,4 @@ function removeLinkToDB(key, originalObject);
 
 - [Phaser CE 官方文件](https://photonstorm.github.io/phaser-ce/)
 - [Git 常用指令文件](http://gitqwerty777.github.io/git-commands/)
+- [Socket.io](https://socket.io/)
