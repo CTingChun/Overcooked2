@@ -1,5 +1,18 @@
 # Game Server Doc 伺服器文件
 
+## 本機端啟用方法
+
+```sh
+# 切換到 server 資料夾
+cd gameServer
+
+# 安裝 npm 相關套件
+npm install
+
+# 啟動 Server
+npm run serve
+```
+
 ## Socket IO 相關細節
 
 1. 使用 memory-based 的模式
