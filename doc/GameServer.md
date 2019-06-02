@@ -31,7 +31,7 @@ Class 分類：
 
 ### Player 更新
 
-## Implementation Doc 開發文件
+## Implementation Doc 開發文件 (In Server's Perspective)
 
 ### Class: Hall
 
@@ -61,5 +61,49 @@ socket.emit('joinRoom', '[RoomName房間名稱]', mes => {});
 - 重複訊息：Already In Room
 - 房間不存在：Room Not Exist
 - 錯誤訊息：Server Internal Error
+
+使用者成功加入後，Server 會發出 [updateRoom](#emit-updateroom) 事件
+
+#### Emit: updateHall
+
+當以下 Event 被觸發時：
+
+- [createRoom](#on-createroom)
+
+Server 會 emit 一個訊息給大廳裡所有使用者，訊息內容格式為
+
+```js
+// Server 回傳資料格式
+[
+  '房間名稱1',
+  '房間名稱2',
+  ...
+]
+
+// 前端接收
+socket.on('updateHall', payload => { ... });
+```
+
+### Class: Room
+
+#### Emit: updateRoom
+
+當以下 Event 被觸發時：
+
+- [joinRoom](#on-joinroom)
+
+Server 會 emit 一個訊息給房間內所有使用者，訊息內容格式為
+
+```js
+// Server 回傳資料格式
+{
+  members: [{
+    name: "[member's name]"
+  }, ...]
+}
+
+// 前端接收
+socket.on('updateRoom', payload => { ... });
+```
 
 ## Version History

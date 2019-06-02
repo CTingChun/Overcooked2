@@ -27,6 +27,10 @@ class Hall {
         if (success === 0) fn('Room Successfully Created');
         else if (success === 1) fn('Duplicate Room Name');
         else fn('Server Internal Error');
+
+        // 整理 Payload
+        let payload = this.rooms.map(r => r.name);
+        this.io.emit('updateHall', payload);
       });
 
       // Join Room
@@ -61,9 +65,6 @@ class Hall {
 
       // Add to record and emit to all client
       this.rooms.push(newRoom);
-      this.io.emit('roomCreated', {
-        name: roomName
-      });
 
       // Client Join
       newRoom.joinRoom(socket, roomName);
