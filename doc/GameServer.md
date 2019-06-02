@@ -22,8 +22,8 @@ npm run serve
 ### Group 機制
 
 運作機制：
-- 每個使用者一進遊戲會需要先輸入名字，輸入完後會 Connect 到大廳( `Namespace: Hall` )
-- 使用者可以創建 Room，創建完會顯現在群組列表裡，各個使用者都可以加入( `Namespace: Hall, RoomID` )，有人數限制(4 人)
+- ~~每個使用者一進遊戲會需要先輸入名字，輸入完後會 Connect 到大廳( `Namespace: Hall` )~~
+- 使用者可以創建 Room，創建完會顯現在群組列表裡，各個使用者都可以加入( `Namespace: Hall, RoomName` )，有人數限制(4 人)
 
 Class 分類：
 - `Class: Hall`: 記錄目前有哪些房間，負責對 Client 做所有資料更新
@@ -47,6 +47,8 @@ socket.emit('createRoom', '[RoomName房間名稱]', mes => {});
 - 成功訊息：Room Successfully Created
 - 重複訊息：Duplicate Room Name
 - 錯誤訊息：Server Internal Error
+
+使用者成功加入後，Server 會發出 [updateHall](#emit-updatehall) 事件
 
 #### On: joinRoom
 
