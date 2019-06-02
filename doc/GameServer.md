@@ -41,11 +41,25 @@ Class 分類：
 
 ```js
 // fn 中 message 會是 Server 回傳的確認訊息
-socket.emit('createRoom', '[RoomName房間名稱], fn(message)');
+socket.emit('createRoom', '[RoomName房間名稱]', mes => {});
 ```
 
 - 成功訊息：Room Successfully Created
 - 重複訊息：Duplicate Room Name
+- 錯誤訊息：Server Internal Error
+
+#### On: joinRoom
+
+使用者可以透過 emit **joinRoom** 向 Server 請求加入一個房間。使用者需傳送**房間名稱**，並在 emit 中傳入 ACK Call Back 作為成功與否的確認
+
+```js
+// fn 中 message 會是 Server 回傳的確認訊息
+socket.emit('joinRoom', '[RoomName房間名稱]', mes => {});
+```
+
+- 成功訊息：Successfully Join Room
+- 重複訊息：Already In Room
+- 房間不存在：Room Not Exist
 - 錯誤訊息：Server Internal Error
 
 ## Version History

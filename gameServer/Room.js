@@ -46,6 +46,15 @@ class Room {
     this.updateRoomInfo();
   }
 
+  /**
+   * 
+   * @param { SocketIO.Socket } socket 
+   */
+  isInRoom(socket) {
+    let idx = this.clients.findIndex(e => e.socketId === socket.id);
+    return idx > -1;
+  }
+
   // Private
   updateRoomInfo() {
     // Construct Payload
