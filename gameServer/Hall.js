@@ -28,9 +28,7 @@ class Hall {
         else if (success === 1) fn('Duplicate Room Name');
         else fn('Server Internal Error');
 
-        // 整理 Payload
-        let payload = this.rooms.map(r => r.name);
-        this.io.emit('updateHall', payload);
+        this.updateHall();
       });
 
       // Join Room
@@ -103,6 +101,15 @@ class Hall {
     room.joinRoom(socket, clientName);
     Util.logger(`Socket ${socket.id} join room ${roomName}`);
     return 0;
+  }
+
+  /**
+   * @private
+   */
+  updateHall() {
+    // 整理 Payload
+    let payload = this.rooms.map(r => r.name);
+    this.io.emit('updateHall', payload);
   }
 }
 
