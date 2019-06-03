@@ -60,7 +60,9 @@ class Room {
     // Construct Payload
     let payload = {};
     payload.members = this.clients.map(e => {
-      name: e.name
+      return {
+        name: e.name
+      }
     });
 
     // Emit Event

@@ -20,8 +20,8 @@ class Hall {
     // Add Connect Event (Socket.io)
     this.io.on('connect', (client) => {
       // Create Room Event
-      client.on('createRoom', (roomName, fn) => {
-        let success = this.createRoom(client, roomName);
+      client.on('createRoom', (roomName, clientName, fn) => {
+        let success = this.createRoom(client, clientName, roomName);
 
         // Return To Client
         if (success === 0) fn('Room Successfully Created');
@@ -34,8 +34,8 @@ class Hall {
       });
 
       // Join Room
-      client.on('joinRoom', (roomName, fn) => {
-        let success = this.joinRoom(client, roomName);
+      client.on('joinRoom', (roomName, clientName, fn) => {
+        let success = this.joinRoom(client, clientName, roomName);
 
         // Return to Client
         if (success === 0) fn('Successfully Join Room');
@@ -50,9 +50,10 @@ class Hall {
   /**
    * @private
    * @param { SocketIO.Socket } socket 
+   * @param { String } clientName
    * @param { String } roomName 
    */
-  createRoom(socket, roomName) {
+  createRoom(socket, clientName, roomName) {
     try {
       // Check If Room Exist
       if (this.rooms.findIndex(r => r.name === roomName) > -1) {
@@ -67,7 +68,7 @@ class Hall {
       this.rooms.push(newRoom);
 
       // Client Join
-      newRoom.joinRoom(socket, roomName);
+      newRoom.joinRoom(socket, clientName);
 
       Util.logger(`Client Create Room: ${roomName}`);
       return 0;
@@ -80,9 +81,10 @@ class Hall {
   /**
    * @private
    * @param { SocketIO.Socket } socket 
+   * @param { String } clientName
    * @param { String } roomName 
    */
-  joinRoom(socket, roomName) {
+  joinRoom(socket, clientName, roomName) {
     // 確認有無此房間
     let room = this.rooms.find(r => r.name === roomName);
     if (!room) {
@@ -94,7 +96,7 @@ class Hall {
     if (room.isInRoom(socket)) return 2;
 
     // 加入房間
-    room.joinRoom(socket, roomName);
+    room.joinRoom(socket, clientName);
     Util.logger(`Socket ${socket.id} join room ${roomName}`);
     return 0;
   }

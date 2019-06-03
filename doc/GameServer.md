@@ -37,11 +37,11 @@ Class 分類：
 
 #### On: createRoom
 
-使用者可以透過 emit **createRoom** 向 Server 請求創建一個房間。使用者需傳送**房間名稱**，並在 emit 中傳入 ACK Call Back 作為成功與否的確認
+使用者可以透過 emit **createRoom** 向 Server 請求創建一個房間。使用者需傳送**房間名稱**和**使用者輸入的名稱**，並在 emit 中傳入 ACK Call Back 作為成功與否的確認
 
 ```js
 // fn 中 message 會是 Server 回傳的確認訊息
-socket.emit('createRoom', '[RoomName房間名稱]', mes => {});
+socket.emit('createRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]' mes => {});
 ```
 
 - 成功訊息：Room Successfully Created
@@ -52,11 +52,11 @@ socket.emit('createRoom', '[RoomName房間名稱]', mes => {});
 
 #### On: joinRoom
 
-使用者可以透過 emit **joinRoom** 向 Server 請求加入一個房間。使用者需傳送**房間名稱**，並在 emit 中傳入 ACK Call Back 作為成功與否的確認
+使用者可以透過 emit **joinRoom** 向 Server 請求加入一個房間。使用者需傳送**房間名稱**和**使用者輸入的名稱**，並在 emit 中傳入 ACK Call Back 作為成功與否的確認
 
 ```js
 // fn 中 message 會是 Server 回傳的確認訊息
-socket.emit('joinRoom', '[RoomName房間名稱]', mes => {});
+socket.emit('joinRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]', mes => {});
 ```
 
 - 成功訊息：Successfully Join Room
