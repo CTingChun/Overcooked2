@@ -41,6 +41,7 @@ class Hall {
         if (success === 0) fn('Successfully Join Room');
         else if (success === 1) fn('Room Not Exist');
         else if (success === 2) fn('Already In Room');
+        else if (success === 3) fn('Room is full.');
         else fn('Server Internal Error');
       });
     });
@@ -94,6 +95,9 @@ class Hall {
 
     // 確認是否已在房間中
     if (room.isInRoom(socket)) return 2;
+
+    // 確認是否還有空間
+    if (room.clients.length >= 4) return 3;
 
     // 加入房間
     room.joinRoom(socket, clientName);
