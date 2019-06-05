@@ -31,6 +31,8 @@ Class 分類：
 
 ### Player 更新
 
+運作機制：
+
 ## Implementation Doc 開發文件 (In Server's Perspective)
 
 ### Class: Hall

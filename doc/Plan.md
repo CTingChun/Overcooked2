@@ -64,6 +64,74 @@ git merge --no-ff dev;
 - Input: Js 物件建構，只是一個控制器，各個 Function 獨立
 - Implementation Detail: Below
 
+#### Connector V2.0 (Functionality Implemented With SocketIO)
+
+##### 使用方法 使いの方
+
+有個全遇的 Class 叫 `SocketConnector`，使用方法即是對著他呼叫函式，例如：
+```js
+// 呼叫 Update 自己 Player Sprite 裡的變數
+SocketConnector.updatePlayerSprite(payload);
+```
+
+整套使用方法如下:
+```js
+// 以下 Code 不要直接用抄的，因為這類似 pseudo code，比如說我寫 await 代表說他回傳是一個 Promise，要馬你可以用 then(res => { ... }) 拿到資料，或是用 async/await function 像下面一樣拿到資料
+
+// 首先，要先加入一個房間，加入房間時前端要提供 1. 要加入的房間名稱 2. 玩家名稱
+// 取回現有房間訊息的方法
+let roomsInfo = await SocketConnector.getRoomsInfo();
+
+// 拿到資訊後，可以開始加入房間（回傳訊息格式可以按下面連結）
+let message = await SocketConnector.joinRoom(roomsInfo.name, '[玩家自定義名稱]');
+
+// 當然也可以自己創建房間（一樣訊息格式可以按下面）
+let message = await SocketConnector.createRoom('[玩家自定義房間名稱]', '[玩家自定義名稱]')
+
+// 接下來如果開始做同步更新 Player 的功能時，可以這樣做
+let playersInfo = await SocketConnector.getPlayersInfo();
+
+// 回傳的格式是一個陣列，裡面每個 Object 都包含以下訊息
+
+{
+  name: '[玩家當初輸入名稱]',
+  socketId: socket.id,    // 這個很重要，是每個 Player Socket 的 ID
+  isReady: false
+}
+
+// 有了 PlayersInfo 就可以開始產生 Player 陣列
+// 每個 Player 裡面一定要有二個 Property，分別是 this.sprite 用來指向最初 Phaser.Sprite 的物件，和 this.socketId，存入剛剛拿回來的 SocketId。這兩個東西我的 Code 裡面會用到
+
+// 產生 Player
+playerList = playersInfo.map(info => {
+  // 當然這邊都可以自己定義，看是要用 Constructor, 還是後面再加都可以
+  return new Player(socketId);
+})
+
+// 有了 List 以後要做註冊 Syncup 的動作
+SocketConnector.syncAllSocket(playerList);
+
+// 接下來就可以開始發送更新啦
+// 目前我只有做兩種，分別是對整個 Sprite 的更新：
+SocketConnector.update('sprite', {
+  alpha: 0.9,
+  centerX: 100,
+  centerY: 138,
+  // .... 直接把 Phaser.Sprite 裡可以改的東西包成一個 Object 傳進來
+});
+
+// Sprite 裡 Body 的更新
+SocketConnector.update('spriteBody', {
+  x: 124,
+  y: 124,
+  // .... 直接把 Phaser.Sprite 裡 Body 可以改的東西包成一個 Object 傳進來
+});
+```
+
+可以用 Command + 滑鼠對著連結點擊(Mac) / Control + 滑鼠對著連結點擊(Windows) 切到文件位置
+- [JoinRoom 回傳訊息格式連結](./GameServer.md#on-joinroom)
+- [CreateRoom 回傳訊息格式點節](./GameServer.md#on-createroom)
+
 #### Connector V1.0 (Functionality Implemented With Firebase)
 
 ##### DB 路徑定義

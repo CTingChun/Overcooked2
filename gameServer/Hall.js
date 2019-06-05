@@ -19,6 +19,18 @@ class Hall {
 
     // Add Connect Event (Socket.io)
     this.io.on('connect', (client) => {
+      // Get Rooms List
+      client.on('getRooms', (fn) => {
+        // Create Payload
+        let payload = this.rooms.map(r => {
+          return {
+            name: r.name,
+            clientNumbers: r.currentClientNumber
+          };
+        });
+        fn(payload);
+      })
+
       // Create Room Event
       client.on('createRoom', (roomName, clientName, fn) => {
         let success = this.createRoom(client, clientName, roomName);
