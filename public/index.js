@@ -10,7 +10,11 @@ firebase.initializeApp({
   appId: "1:1054701344101:web:6c05d13497ea57d5"
 });
 
+// Init Game
 var game = new Phaser.Game(1280, 720, Phaser.AUTO);
+
+// Add Socket to Game
+game.socket = io('http://localhost:80/Hall');
 
 // Add Game State
 game.state.add('Menu', new Menu());
