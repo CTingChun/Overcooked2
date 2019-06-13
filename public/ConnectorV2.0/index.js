@@ -1,4 +1,11 @@
 // Connector V2.0
+
+// 支援監聽 Event 名稱
+var EventNameList = [
+  'updateHall',
+  'updateRoom'
+]
+
 class SocketConnector {
   constructor() {}
 
@@ -117,6 +124,29 @@ class SocketConnector {
       // Update Sprite
       Object.assign(target.sprite.body, payload);
     })
+  }
+
+  /**
+   * 
+   * @param { String } eventName 
+   * @param { Function } callback 
+   * @param { Object } context 
+   */
+  static addEventListner(eventName, callback, context=null) {
+    // 確認是否支援此 Event
+    if (EventNameList.indexOf(eventName) < 0) {
+      console.error(`不支援此事件名稱：${eventName}.`);
+      return undefined;
+    }
+
+    // 添加 Event 到 Socket 上
+    if (context) {
+      game.socket.on(eventName, (...Args) => {
+        callback.call(context, ...Args);
+      });
+    } else {
+      game.socket.on(eventName, callback);
+    }
   }
 
   static removeSync() {
