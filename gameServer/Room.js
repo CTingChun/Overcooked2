@@ -58,6 +58,9 @@ class Room {
 
     // Emit To Room Member
     this.updateRoomInfo();
+
+    // Return Client Numbers
+    return this.clients.length;
   }
   /**
    * @public
@@ -78,6 +81,9 @@ class Room {
 
     // Update Room Info
     this.updateRoomInfo();
+
+    // Return Client Numbers
+    return this.clients.length;
   }
 
   /**

@@ -51,9 +51,22 @@ class Hall {
         if (success === 0) fn('Successfully Join Room');
         else if (success === 1) fn('Room Not Exist');
         else if (success === 2) fn('Already In Room');
-        else if (success === 3) fn('Room is full.');
+        else if (success === 3) fn('Room is full');
         else fn('Server Internal Error');
       });
+
+      // Leave Room
+      client.on('leaveRoom', (fn) => {
+        let success = this.leaveRoom(client);
+
+        // Return to Client
+        if (success === 0) fn('Successfully Leave Room');
+        else if (success === 1) fn('Client Not In Any Room');
+      })
+
+      // Disconnect Clear Up
+      client.on('disconnect', () => {
+      })
     });
   }
 
@@ -112,6 +125,30 @@ class Hall {
     // 加入房間
     room.joinRoom(socket, clientName);
     Util.logger(`Socket ${socket.id} join room ${roomName}`);
+    return 0;
+  }
+
+  /**
+   * @private
+   */
+  leaveRoom(socket) {
+    // 先尋找 Client 是在哪個 Room，順便確認是否真的有在任一群組中
+    let roomIdx = this.rooms.findIndex(r => r.isInRoom(socket));
+
+    // Client Not In Any Room.
+    if (roomIdx === -1) return 1;
+
+    let room = this.rooms[roomIdx];
+
+    // 離開房間
+    let remainClientNumber = room.leaveRoom(socket);
+
+    // 確認是否刪除房間，並更新大廳資訊
+    if (remainClientNumber === 0) {
+      this.rooms.splice(roomIdx, 1);
+      this.updateHall();
+    }
+
     return 0;
   }
 
