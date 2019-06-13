@@ -66,6 +66,8 @@ class Hall {
 
       // Disconnect Clear Up
       client.on('disconnect', () => {
+        // 斷線要離開房間
+        this.leaveRoom(client);
       })
     });
   }
@@ -130,6 +132,7 @@ class Hall {
 
   /**
    * @private
+   * @param { SocketIO.Socket } socket 
    */
   leaveRoom(socket) {
     // 先尋找 Client 是在哪個 Room，順便確認是否真的有在任一群組中
@@ -142,9 +145,12 @@ class Hall {
 
     // 離開房間
     let remainClientNumber = room.leaveRoom(socket);
+    Util.logger(`Client ${socket.id} leave room ${room.name}.`);
 
     // 確認是否刪除房間，並更新大廳資訊
     if (remainClientNumber === 0) {
+      Util.logger(`Room ${room.name} deleted.`);
+
       this.rooms.splice(roomIdx, 1);
       this.updateHall();
     }
