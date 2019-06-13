@@ -55,6 +55,18 @@ class SocketConnector {
     });
   }
 
+  static leaveRoom(roomName, clientName) {
+    return new Promise((res, rej) => {
+      try {
+        game.socket.emit('leaveRoom', (mes) => {
+          res(mes);
+        });
+      } catch (err) {
+        rej();
+      }
+    });
+  }
+
   static getPlayersInfo() {
     return new Promise((res, rej) => {
       try {

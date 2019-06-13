@@ -85,6 +85,9 @@ let roomsInfo = await SocketConnector.getRoomsInfo();
 // 拿到資訊後，可以開始加入房間（回傳訊息格式可以按下面連結）
 let message = await SocketConnector.joinRoom(roomsInfo.name, '[玩家自定義名稱]');
 
+// 也可以來開房間
+let message = await SocketConnector.leaveRoom();
+
 // 當然也可以自己創建房間（一樣訊息格式可以按下面）
 let message = await SocketConnector.createRoom('[玩家自定義房間名稱]', '[玩家自定義名稱]')
 
