@@ -43,7 +43,7 @@ Class 分類：
 
 ```js
 // fn 中 message 會是 Server 回傳的確認訊息
-socket.emit('createRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]' mes => {});
+socket.emit('createRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]' mes => { ... });
 ```
 
 - 成功訊息：Room Successfully Created
@@ -58,13 +58,27 @@ socket.emit('createRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]
 
 ```js
 // fn 中 message 會是 Server 回傳的確認訊息
-socket.emit('joinRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]', mes => {});
+socket.emit('joinRoom', '[RoomName房間名稱]', '[ClientName使用者名稱]', mes => { ... });
 ```
 
 - 成功訊息：Successfully Join Room
 - 重複訊息：Already In Room
 - 房間不存在：Room Not Exist
 - 錯誤訊息：Server Internal Error
+
+使用者成功加入後，Server 會發出 [updateRoom](#emit-updateroom) 事件
+
+#### On: leaveRoom
+
+使用者可以透過 emit **joinRoom** 向 Server 請求加入一個房間。使用者不需傳送**任何東西**，但需要在 emit 中傳入 ACK Call Back 作為成功與否的確認
+
+```js
+// fn 中 message 會是 Server 回傳的確認訊息
+socket.emit('leaveRoom', mes => { ... });
+```
+
+- 成功訊息：Successfully Leave Room
+- 未加入房間訊息：Client Not In Any Room
 
 使用者成功加入後，Server 會發出 [updateRoom](#emit-updateroom) 事件
 
