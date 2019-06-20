@@ -2,6 +2,10 @@ class MainGame extends Phaser.State {
   constructor() {
     // Constructor, 基本上不用加東西
     super();
+
+    // Players Object
+    this.players = [];
+    this.player = null;
   }
 
   preload() {
@@ -13,96 +17,90 @@ class MainGame extends Phaser.State {
     game.load.image('green', 'assets/blockGreen.png');
     game.load.image('red', 'assets/blockRed.png');
     game.load.image('tiles', 'assets/template.jpg');
-
-    game.load.image('player', 'assets/sprite.png');
+    
+    // Food
+    this.game.load.image('onion-1', './assets/onion-1.png');
   }
 
-  create() {
+  async create() {
     // Create Hook, 對這個 State 做 Init
-
     // Map
     this.initTilemap();
 
-    this.initKeyboard();
+    await this.testConnector();
 
-    this.resetPlayer();
+    // Get Player Info
+    let playerInfos = await SocketConnector.getPlayersInfo();
 
-    game.input.keyboard.addKey(Phaser.KeyCode.C).onDown.add(() => {
-      this.collisionLayer.visible = !this.collisionLayer.visible;
+    let players = playerInfos.map(p => {
+      let newPlayer = new Player(this.game, 'onion-1', 100, 100, p.socketId);
+
+      // Set Player
+      if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
+
+      return newPlayer;
     });
+
+    // Sync Socket.
+    SocketConnector.syncAllSocket(players);
+
+    // Add Key Control Callback
+    this.game.input.keyboard.createCursorKeys();
+    this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-    this.updatePlayer();
 
-    game.physics.arcade.collide(this.player, this.collisionLayer);
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
-  initPlayer() {
-    var player = game.add.sprite(0,0,'player');
-    this.player = player;
+  keyDone(event) {
+    let { key } = event;
 
-    player.MOVE_SPEED = 150;
-    player.anchor.set(0.5);
-    player.scale.set(0.6);
-
-    game.physics.arcade.enable(player);
+    if(key === 'ArrowLeft') this.player.moveLeft();
+    if(key === 'ArrowRight') this.player.moveRight();
+    if(key === 'ArrowDown') this.player.moveDown();
+    if(key === 'ArrowUp') this.player.moveUp();
   }
 
-  initKeyboard() {
-    this.keyboardCursors = game.input.keyboard.createCursorKeys();
-    this.moveSpeed = { x: 0, y: 0 }
+  keyUp() {
 
-    this.wasd = {
-      up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-      down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-      left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-      right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-    };
   }
 
-  resetPlayer() {
-    // pull the entrace and start coordinates from the objects layer
-    var start = this.map.objects.meta.find(o => o.name == 'start');
+  initTilemap() {
+    var map = game.add.tilemap('map');
 
-    this.player.position.set(start.x, start.y);
-    this.player.angle = 0;
+    this.map = map;
+
+    map.addTilesetImage('try1', 'tiles');
+    map.addTilesetImage('blockGreen', 'green');
+    map.addTilesetImage('blockRed', 'red');
+
+    map.createLayer('base');
+
+    var collisionLayer = map.createLayer('collision');
+    this.collisionLayer = collisionLayer;
+
+    collisionLayer.visible = false;
+
+    map.setCollisionByExclusion([], true, this.collisionLayer);
+    collisionLayer.resizeWorld();
+
+    map.createLayer('foreground');
   }
 
-  updatePlayer() {
-    var keyboardCursors = this.keyboardCursors;
-    var wasd = this.wasd;
-    var player = this.player;
-    var moveSpeed = this.moveSpeed;
+  // Test Connector
+  testConnector() {
+    return new Promise(async (res, rej) => {
+      // Test For Add To Team
+      let roomMessage = await SocketConnector.createRoom('Test', 'Tester1');
 
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
-
-    if (keyboardCursors.left.isDown || wasd.left.isDown)
-        moveSpeed.x = -player.MOVE_SPEED;
-    else if (keyboardCursors.right.isDown || wasd.right.isDown)
-        moveSpeed.x = player.MOVE_SPEED;
-    else
-        moveSpeed.x = 0;
-
-    // up and down keyboard movement
-    if (keyboardCursors.up.isDown || wasd.up.isDown)
-        moveSpeed.y = -player.MOVE_SPEED;
-    else if (keyboardCursors.down.isDown || wasd.down.isDown)
-        moveSpeed.y = player.MOVE_SPEED;
-    else
-        moveSpeed.y = 0;
-
-    if (Math.abs(moveSpeed.x) > 0 || Math.abs(moveSpeed.y) > 0) {
-        player.body.velocity.x = moveSpeed.x;
-        player.body.velocity.y = moveSpeed.y;
-
-        // set direction using Math.atan2
-        /*let targetPos = { x: player.x + moveSpeed.x, y: player.y + moveSpeed.y };
-        player.rotation = Math.atan2(targetPos.y - player.y, targetPos.x - player.x);*/
-    }  
+      if (roomMessage === 'Duplicate Room Name') {
+        await SocketConnector.joinRoom('Test', 'Tester2');
+      }
+      res();
+    })
   }
 }
