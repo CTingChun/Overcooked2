@@ -55,6 +55,11 @@ git merge --no-ff dev;
 
 視窗大小：1280 * 720
 
+Player1 Position: X: 450, Y: 250
+Player2 Position: X: 830, Y: 250
+Player3 Position: X: 450, Y: 470
+Player4 Position: X: 830, Y: 470
+
 ### Main Game 遊戲主體邏輯
 
 #### 多人連線模組
