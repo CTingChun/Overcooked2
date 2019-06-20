@@ -54,4 +54,11 @@ class Player {
       
     }
   }
+
+  // Delete Whole Object
+  delete() {
+    console.log(`Player Delete ${this.socketId}`);
+    // Delete Sprite
+    this.sprite.destroy();
+  }
 }

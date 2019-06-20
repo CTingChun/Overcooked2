@@ -107,6 +107,10 @@ class SocketConnector {
    * @param { Array } players, Array Of Player Class
    */
   static syncAllSocket(players) {
+    // Remove All Listner
+    game.socket.off('updatePlayerSprite');
+    game.socket.off('updatePlayerSpriteBody');
+
     // Add UpdatePlayerSprite
     game.socket.on('updatePlayerSprite', (payload, socketId) => {
       // Find Player
