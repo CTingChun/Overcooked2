@@ -13,6 +13,9 @@ class Room {
 
     // Socket In Room
     this.clients = [];
+
+    // Room Player Slot
+    this.roomPlayerSlot = [false, false, false, false];
   }
   // Getter
   get currentClientNumber() {
@@ -28,10 +31,16 @@ class Room {
   joinRoom(socket, name) {
     // Join Room
     socket.join(this.name);
+
+    // Prepare Player Slot
+    let playerSlot = this.roomPlayerSlot.findIndex(isOccupied => !isOccupied);
+    this.roomPlayerSlot[playerSlot] = true;
+
     this.clients.push({
       name,
       socketId: socket.id,
-      isReady: false
+      isReady: false,
+      playerPosition: String(playerSlot)
     });
 
     // Add Set Ready
@@ -41,13 +50,13 @@ class Room {
     });
 
     // Update Sprite
-    socket.on('updateSprite', (payload) => {
-      this.room.emit('updatePlayerSprite', payload, socket.id);
+    socket.on('updateSprite', (payload, controlMes) => {
+      this.room.emit('updatePlayerSprite', payload, socket.id, controlMes);
     });
 
     // Update Sprite Body
-    socket.on('updateSpriteBody', (payload) => {
-      this.room.emit('updatePlayerSpriteBody', payload, socket.id);
+    socket.on('updateSpriteBody', (payload, controlMes) => {
+      this.room.emit('updatePlayerSpriteBody', payload, socket.id, controlMes);
     });
 
     // Get Room Players Info
@@ -58,6 +67,9 @@ class Room {
 
     // Emit To Room Member
     this.updateRoomInfo();
+
+    // Return Client Numbers
+    return this.clients.length;
   }
   /**
    * @public
@@ -67,17 +79,24 @@ class Room {
     // Leave Room
     socket.leave(this.name);
 
-    // Delete Member
     let idx = this.clients.findIndex(e => e.socketId === socket.id);
-    if (idx > -1) this.clients.splice(idx, 1);
 
-    // Remove setReady Event
+    // Delete Member and Free Player Slot
+    if (idx > -1) {
+      this.roomPlayerSlot[Number(this.clients[idx].playerPosition)] = false;
+      this.clients.splice(idx, 1);
+    }
+
+    // Remove Event
     socket.removeAllListeners('setReady');
     socket.removeAllListeners('updateSprite');
     socket.removeAllListeners('updateSpriteBody');
 
     // Update Room Info
     this.updateRoomInfo();
+
+    // Return Client Numbers
+    return this.clients.length;
   }
 
   /**
@@ -96,7 +115,9 @@ class Room {
     payload.members = this.clients.map(e => {
       return {
         name: e.name,
-        isReady: e.isReady
+        isReady: e.isReady,
+        socketId: e.socketId,
+        playerPosition: e.playerPosition
       }
     });
 

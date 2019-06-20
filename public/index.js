@@ -11,7 +11,7 @@ firebase.initializeApp({
 });
 
 // Init Game
-var game = new Phaser.Game(1280, 720, Phaser.AUTO);
+var game = new Phaser.Game(WindowWidth, WindowHeight, Phaser.AUTO);
 
 // Add Socket to Game
 game.socket = io('http://localhost:80/Hall');
@@ -23,4 +23,4 @@ game.state.add('MainGame', new MainGame());
 game.state.add('EndGameMenu', new EndGameMenu());
 
 // Start Game State, 這邊測試的時候可以自己改掉
-game.state.start('Menu');
+game.state.start('MainGame');

@@ -55,6 +55,11 @@ git merge --no-ff dev;
 
 視窗大小：1280 * 720
 
+Player1 Position: X: 450, Y: 250
+Player2 Position: X: 830, Y: 250
+Player3 Position: X: 450, Y: 470
+Player4 Position: X: 830, Y: 470
+
 ### Main Game 遊戲主體邏輯
 
 #### 多人連線模組
@@ -85,8 +90,19 @@ let roomsInfo = await SocketConnector.getRoomsInfo();
 // 拿到資訊後，可以開始加入房間（回傳訊息格式可以按下面連結）
 let message = await SocketConnector.joinRoom(roomsInfo.name, '[玩家自定義名稱]');
 
+// 也可以來開房間
+let message = await SocketConnector.leaveRoom();
+
 // 當然也可以自己創建房間（一樣訊息格式可以按下面）
 let message = await SocketConnector.createRoom('[玩家自定義房間名稱]', '[玩家自定義名稱]')
+
+// 要對某件事情監聽時可以這樣打（目前支援事件名稱列表可以看 ConnectorV2.0/index.js 最上面的 EventNameList）
+// 此 function 的最後一個變數可以不丟，但如果今天是用 Class 的話，90% 都要寫 this
+// 這個 callback function 裡的變數是對應到 GameServer.md 裡對每個 Event 的描述中，每個 Callback 裡應該要丟幾個參數
+SocketConnector.addEventListner('[事件名稱]', (arg1, arg2, ...) => {
+  // Do Something
+  ...
+}, this);
 
 // 接下來如果開始做同步更新 Player 的功能時，可以這樣做
 let playersInfo = await SocketConnector.getPlayersInfo();
