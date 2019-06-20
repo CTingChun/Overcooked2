@@ -22,7 +22,7 @@ class SocketConnector {
     });
   }
 
-  static update(type, payload, controlMes) {
+  static update(type, payload, controlMes='') {
     if (type === 'sprite') {
 
       game.socket.emit('updateSprite', payload, controlMes);
