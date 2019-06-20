@@ -19,7 +19,10 @@ class MainGame extends Phaser.State {
     game.load.image('tiles', 'assets/template.jpg');
     
     // Food
-    this.game.load.image('onion-1', './assets/onion-1.png');
+    this.game.load.spritesheet('onion-1', './assets/onion-1.png',32, 32);
+    this.game.load.spritesheet('meat', './assets/onion-1.png', 32, 32);
+    this.game.load.spritesheet('mushroom', './assets/onion-1.png', 32, 32);
+    this.game.load.spritesheet('tomato', './assets/onion-1.png', 32, 32);
   }
 
   async create() {
