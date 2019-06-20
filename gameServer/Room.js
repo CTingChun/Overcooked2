@@ -102,7 +102,8 @@ class Room {
     payload.members = this.clients.map(e => {
       return {
         name: e.name,
-        isReady: e.isReady
+        isReady: e.isReady,
+        socketId: e.socketId
       }
     });
 

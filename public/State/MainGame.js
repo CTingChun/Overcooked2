@@ -32,7 +32,7 @@ class MainGame extends Phaser.State {
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
-    let players = playerInfos.map(p => {
+    this.players = playerInfos.map(p => {
       let newPlayer = new Player(this.game, 'onion-1', 100, 100, p.socketId);
 
       // Set Player
@@ -42,7 +42,47 @@ class MainGame extends Phaser.State {
     });
 
     // Sync Socket.
-    SocketConnector.syncAllSocket(players);
+    SocketConnector.syncAllSocket(this.players);
+
+    // 新增對 Update Room 的反應
+    SocketConnector.addEventListner('updateRoom', roomInfo => {
+      let { members } = roomInfo;
+      let targetSocketId = '';
+
+      // 尋找 target SocketId
+      // 減少成員
+      if (members.length < this.players.length) {
+        for (let player of this.players) {
+          if (members.findIndex(m => m.socketId === player.socketId) === -1) {
+            targetSocketId = player.socketId;
+            break;
+          }
+        }
+
+        // Remove Member
+        let playerIdx = this.players.findIndex(p => p.socketId === targetSocketId);
+        let player = this.players[playerIdx];
+
+        player.delete();
+
+        // Remove From Players
+        this.players.splice(playerIdx, 1);
+        console.log(`Remove Player ${targetSocketId}.`);
+      }
+      // 新增成員 
+      else if (members.length > this.players.length) {
+        for (let member of members) {
+          if (this.players.findIndex(p => p.socketId === member.socketId) === -1) {
+            targetSocketId = member.socketId;
+            break;
+          }
+        }
+
+        // Add Player
+        this.players.push(new Player(this.game, 'onion-1', 100, 100, targetSocketId));
+        console.log(`Add Player ${targetSocketId}.`);
+      }
+    }, this);
 
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
