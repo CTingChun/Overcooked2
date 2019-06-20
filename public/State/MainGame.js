@@ -81,7 +81,7 @@ class MainGame extends Phaser.State {
 
         // Add Player
         let position = PlayerPosition[targetMember.playerPosition];
-        new Player(this.game, 'onion-1', position.x, position.y, targetMember);
+        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
@@ -111,8 +111,8 @@ class MainGame extends Phaser.State {
 
   }
 
-  syncUpCallback(idx, controlMes) {
-    console.log(idx, controlMes);
+  syncUpCallback(idx, controlMes, target) {
+    console.log(idx, controlMes, target);
   }
 
   initTilemap() {
