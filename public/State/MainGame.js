@@ -23,6 +23,12 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('meat', './assets/onion-1.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/onion-1.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/onion-1.png', 32, 32);
+
+    // Player
+    this.game.load.spritesheet('player1', './assets/player1.png', 64, 64);
+    this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
+    this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
+    this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
   }
 
   async create() {
@@ -37,7 +43,7 @@ class MainGame extends Phaser.State {
 
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'onion-1', position.x, position.y, p.socketId);
+      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -84,7 +90,7 @@ class MainGame extends Phaser.State {
 
         // Add Player
         let position = PlayerPosition[targetMember.playerPosition];
-        new Player(this.game, 'onion-1', position.x, position.y, targetMember);
+        new Player(this.game, 'player1', position.x, position.y, targetMember);
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
@@ -114,8 +120,11 @@ class MainGame extends Phaser.State {
 
   }
 
-  syncUpCallback(idx, controlMes) {
-    console.log(idx, controlMes);
+  syncUpCallback(idx, controlMes, target) {
+    console.log(target);
+    if(controlMes === 'Go Left'){
+      target.sprite.animations.play('left');
+    }
   }
 
   initTilemap() {

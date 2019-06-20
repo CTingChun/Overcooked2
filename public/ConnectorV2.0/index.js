@@ -120,7 +120,7 @@ class SocketConnector {
       SocketConnector._recursiveUpdate(target.sprite, payload);
 
       // Call Back
-      callback.call(context, 0, controlMes);
+      callback.call(context, 0, controlMes, target);
     })
 
     // Add updatePlayerSpriteBody
@@ -132,7 +132,7 @@ class SocketConnector {
       SocketConnector._recursiveUpdate(target.sprite.body, payload);
 
       // Call Back
-      callback.call(context, 0, controlMes);
+      callback.call(context, 0, controlMes, target);
     })
   }
 
