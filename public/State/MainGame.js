@@ -43,7 +43,7 @@ class MainGame extends Phaser.State {
     });
 
     // Sync Socket.
-    SocketConnector.syncAllSocket(this.players);
+    SocketConnector.syncAllSocket(this.players, this, this.syncUpCallback);
 
     // 新增對 Update Room 的反應
     SocketConnector.addEventListner('updateRoom', roomInfo => {
@@ -81,7 +81,7 @@ class MainGame extends Phaser.State {
 
         // Add Player
         let position = PlayerPosition[targetMember.playerPosition];
-        new Player(this.game, 'onion-1', position.x, position.y, targetMember);
+        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
@@ -109,6 +109,10 @@ class MainGame extends Phaser.State {
 
   keyUp() {
 
+  }
+
+  syncUpCallback(idx, controlMes, target) {
+    console.log(idx, controlMes, target);
   }
 
   initTilemap() {

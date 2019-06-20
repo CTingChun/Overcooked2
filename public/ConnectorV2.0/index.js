@@ -22,14 +22,14 @@ class SocketConnector {
     });
   }
 
-  static update(type, payload) {
+  static update(type, payload, controlMes='') {
     if (type === 'sprite') {
 
-      game.socket.emit('updateSprite', payload);
+      game.socket.emit('updateSprite', payload, controlMes);
 
     } else if (type === 'spriteBody') {
 
-      game.socket.emit('updateSpriteBody', payload);
+      game.socket.emit('updateSpriteBody', payload, controlMes);
 
     } else {
 
@@ -106,28 +106,37 @@ class SocketConnector {
    * 
    * @param { Array } players, Array Of Player Class
    */
-  static syncAllSocket(players) {
+  static syncAllSocket(players, context, callback) {
     // Remove All Listner
     game.socket.off('updatePlayerSprite');
     game.socket.off('updatePlayerSpriteBody');
 
     // Add UpdatePlayerSprite
-    game.socket.on('updatePlayerSprite', (payload, socketId) => {
+    game.socket.on('updatePlayerSprite', (payload, socketId, controlMes) => {
       // Find Player
       let target = players.find(player => player.socketId === socketId);
 
       // Update Sprite
       SocketConnector._recursiveUpdate(target.sprite, payload);
+
+      // Call Back
+      callback.call(context, 0, controlMes, target);
     })
 
     // Add updatePlayerSpriteBody
-    game.socket.on('updatePlayerSpriteBody', (payload, socketId) => {
+    game.socket.on('updatePlayerSpriteBody', (payload, socketId, controlMes) => {
       // Find Player
       let target = players.find(player => player.socketId === socketId);
 
+      console.log(socketId);
       // Update Sprite
       SocketConnector._recursiveUpdate(target.sprite.body, payload);
+
+      // Call Back
+      callback.call(context, 0, controlMes, target);
     })
+
+    console.log(`Sync Socket`);
   }
 
   /**
