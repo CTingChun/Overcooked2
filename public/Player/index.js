@@ -21,7 +21,7 @@ class Player {
 
     SocketConnector.update('spriteBody', {
       'velocity.x': -this.playerVelocity
-    })
+    }, 'go Left');
   }
 
   moveRight() {
@@ -29,7 +29,7 @@ class Player {
 
     SocketConnector.update('spriteBody', {
       'velocity.x': this.playerVelocity
-    })
+    }, 'go Right');
   }
 
   moveUp() {
@@ -37,7 +37,7 @@ class Player {
 
     SocketConnector.update('spriteBody', {
       'velocity.y': -this.playerVelocity
-    })
+    }, 'go Up');
   }
 
   moveDown() {
@@ -45,7 +45,7 @@ class Player {
 
     SocketConnector.update('spriteBody', {
       'velocity.y': this.playerVelocity
-    })
+    }, 'go Down');
   }
 
   takeItem() {
