@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Final Project Team31</title>
 
-<head>
-  <title>Final Project Team31</title>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
 
-  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-firestore.js"></script>
 
-  <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-firestore.js"></script>
+    <!-- Phaser.js -->
+    <script src="./module/phaser.min.js"></script>
 
-  <!-- main.js -->
-  <script src="./phaser.min.js"></script>
-  <script src="./index.js"></script>
-  <script src="./game.js"></script>
-</head>
+    <!-- Socket.io Client -->
+    <script src="./module/socket.io.js"></script>
 
-<body>
-</body>
+    <!-- Connector V1.0 -->
+    <script src="./ConnectorV1.0/ProxyHandler.js"></script>
+    <script src="./ConnectorV1.0/index.js"></script>
 
+    <!-- Connector V2.0 -->
+    <script src="./ConnectorV2.0/index.js"></script>
+
+    <!-- Player -->
+    <script src="./Player/index.js"></script>
+
+    <!-- State -->
+    <script src="./State/Menu.js"></script>
+    <script src="./State/Tutorial.js"></script>
+    <script src="./State/MainGame.js"></script>
+    <script src="./State/EndGameMenu.js"></script>
+
+    <!-- main.js -->
+    <script src="./index.js"></script>
+  </head>
+  <body>
+      <div id='canvas'></div>
+  </body>
 </html>
