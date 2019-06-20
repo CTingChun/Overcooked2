@@ -33,7 +33,8 @@ class MainGame extends Phaser.State {
     let playerInfos = await SocketConnector.getPlayersInfo();
 
     this.players = playerInfos.map(p => {
-      let newPlayer = new Player(this.game, 'onion-1', 100, 100, p.socketId);
+      let position = PlayerPosition[p.playerPosition];
+      let newPlayer = new Player(this.game, 'onion-1', position.x, position.y, p.socketId);
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -47,40 +48,41 @@ class MainGame extends Phaser.State {
     // 新增對 Update Room 的反應
     SocketConnector.addEventListner('updateRoom', roomInfo => {
       let { members } = roomInfo;
-      let targetSocketId = '';
+      let targetMember = null;
 
       // 尋找 target SocketId
       // 減少成員
       if (members.length < this.players.length) {
         for (let player of this.players) {
           if (members.findIndex(m => m.socketId === player.socketId) === -1) {
-            targetSocketId = player.socketId;
+            targetMember = player;
             break;
           }
         }
 
         // Remove Member
-        let playerIdx = this.players.findIndex(p => p.socketId === targetSocketId);
+        let playerIdx = this.players.findIndex(p => p.socketId === targetMember.socketId);
         let player = this.players[playerIdx];
 
         player.delete();
 
         // Remove From Players
         this.players.splice(playerIdx, 1);
-        console.log(`Remove Player ${targetSocketId}.`);
+        console.log(`Remove Player ${targetMember.socketId}.`);
       }
       // 新增成員 
       else if (members.length > this.players.length) {
         for (let member of members) {
           if (this.players.findIndex(p => p.socketId === member.socketId) === -1) {
-            targetSocketId = member.socketId;
+            targetMember = member;
             break;
           }
         }
 
         // Add Player
-        this.players.push(new Player(this.game, 'onion-1', 100, 100, targetSocketId));
-        console.log(`Add Player ${targetSocketId}.`);
+        let position = PlayerPosition[targetMember.playerPosition];
+        new Player(this.game, 'onion-1', position.x, position.y, targetMember);
+        console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
 
