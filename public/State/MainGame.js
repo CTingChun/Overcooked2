@@ -46,7 +46,7 @@ class MainGame extends Phaser.State {
     });
 
     // Sync Socket.
-    SocketConnector.syncAllSocket(this.players);
+    SocketConnector.syncAllSocket(this.players, this, this.syncUpCallback);
 
     // 新增對 Update Room 的反應
     SocketConnector.addEventListner('updateRoom', roomInfo => {
@@ -112,6 +112,10 @@ class MainGame extends Phaser.State {
 
   keyUp() {
 
+  }
+
+  syncUpCallback(idx, controlMes) {
+    console.log(idx, controlMes);
   }
 
   initTilemap() {
