@@ -113,7 +113,7 @@ class SocketConnector {
       let target = players.find(player => player.socketId === socketId);
 
       // Update Sprite
-      Object.assign(target.sprite, payload);
+      SocketConnector._recursiveUpdate(target.sprite, payload);
     })
 
     // Add updatePlayerSpriteBody
@@ -122,7 +122,7 @@ class SocketConnector {
       let target = players.find(player => player.socketId === socketId);
 
       // Update Sprite
-      Object.assign(target.sprite.body, payload);
+      SocketConnector._recursiveUpdate(target.sprite.body, payload);
     })
   }
 
@@ -152,5 +152,27 @@ class SocketConnector {
   static removeSync() {
     game.socket.removeAllListeners('updatePlayerSprite');
     game.socket.removeAllListeners('updatePlayerSpriteBody');
+  }
+
+  static _recursiveUpdate(object, payload) {
+    // Update Multiple payload
+    // 1-1 Get Payload Keys
+    let payloadKeys = Object.keys(payload);
+
+    for (let key of payloadKeys) {
+      // 1-2 Parse Path
+      let path = key.split('.');
+      let pathLength = path.length;
+
+      // 1-3 Update Object
+      let targetObject = object;
+      for (let i = 0; i < pathLength; i++) {
+        if (i === pathLength - 1) {
+          targetObject[path[i]] = payload[key];
+        } else {
+          targetObject = targetObject[path[i]];
+        }
+      }
+    }
   }
 }
