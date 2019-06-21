@@ -143,6 +143,12 @@ class SocketConnector {
     })
   }
 
+  static syncTimeout(callback, context) {
+    game.socket.on('updateTimeCount', (timeCount) => {
+      callback.call(context, timeCount);
+    })
+  }
+
   static deleteMenu(menu) {
     game.socket.emit('completeMenu', menu.idx, menu.hash);
   }
@@ -173,7 +179,6 @@ class SocketConnector {
       // Find Player
       let target = players.find(player => player.socketId === socketId);
 
-      console.log(socketId);
       // Update Sprite
       SocketConnector._recursiveUpdate(target.sprite.body, payload);
 
