@@ -133,4 +133,24 @@ class Player {
     this.sprite.destroy();
   }
 
+  clearAllFlag(isClearPlate=false) {
+    if (!this.isPlate && !this.isPot) {
+      // Constant Variable
+      this.isHolding = false;
+
+      //check item
+      this.isOnion = false;
+      this.isTomato = false;
+      this.isMushroom = false;
+      this.isPot = false;
+      this.isPlate = false;
+
+      this.holdingObject = null;
+    } 
+
+    if (isClearPlate) {
+      this.holdingObject = null;
+    }
+  }
+
 }

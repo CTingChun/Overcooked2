@@ -36,7 +36,7 @@ class Room {
     this.ScoreUnit = 20;
 
     // Time Count
-    this.timeCount = 20;
+    this.timeCount = 180;
 
     Util.logger(`Room Instance ${this.hash}`);
   }
