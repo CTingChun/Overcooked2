@@ -18,7 +18,22 @@ class MainGame extends Phaser.State {
     game.load.image('tiles', 'assets/Map.jpg');
     
     // Food
-    this.game.load.image('onion-1', './assets/onion-1.png');
+    this.game.load.spritesheet('onion-1', './assets/onion-1.png',32, 32);
+    this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
+    this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
+    this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+
+    this.onions = game.add.physicsGroup();
+    this.onions.enableBody = true;
+    this.mushrooms = game.add.physicsGroup();
+    this.mushrooms.enableBody = true;
+    this.tomatos = game.add.physicsGroup();
+    this.tomatos.enableBody = true;
+    // Player
+    this.game.load.spritesheet('player1', './assets/player1.png', 64, 64);
+    this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
+    this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
+    this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
   }
 
   async create() {
@@ -50,7 +65,7 @@ class MainGame extends Phaser.State {
 
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'onion-1', position.x, position.y, p.socketId);
+      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -97,7 +112,7 @@ class MainGame extends Phaser.State {
 
         // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
+        this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
@@ -107,22 +122,29 @@ class MainGame extends Phaser.State {
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
     this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
+
+    //Create Food Pool
+    this.onions.createMultiple(50, 'onion-1');
+    this.tomatos.createMultiple(50, 'tomato');
+    this.mushrooms.createMultiple(50, 'mushroom');
+
+
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-
+    
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
-
     if(key === 'ArrowLeft') this.player.moveLeft();
     if(key === 'ArrowRight') this.player.moveRight();
     if(key === 'ArrowDown') this.player.moveDown();
     if(key === 'ArrowUp') this.player.moveUp();
+    if(key === ' ') console.log();
   }
 
   keyUp() {
@@ -130,7 +152,17 @@ class MainGame extends Phaser.State {
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(idx, controlMes, target);
+    console.log(target);
+    console.log(controlMes);
+    if(controlMes === 'go Left'){
+      target.sprite.animations.play('left');
+    } else if (controlMes === 'go Right'){
+      target.sprite.animations.play('right');
+    } else if (controlMes === 'go Up') {
+      target.sprite.animations.play('up');
+    } else if (controlMes === 'go Down') {
+      target.sprite.animations.play('down');
+    }
   }
 
   
