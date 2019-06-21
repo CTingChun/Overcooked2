@@ -16,9 +16,9 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/Map5.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('red', 'assets/blockRed5.png');
+    game.load.image('red', 'assets/blockRed10.png');
     game.load.image('tiles', 'assets/Map.jpg');
 
     // Food
@@ -55,8 +55,8 @@ class MainGame extends Phaser.State {
 
     this.map = map;
 
-    map.addTilesetImage('Map5', 'tiles');
-    map.addTilesetImage('blockRed5', 'red');
+    map.addTilesetImage('Map10', 'tiles');
+    map.addTilesetImage('blockRed10', 'red');
 
     map.createLayer('base');
 
@@ -127,6 +127,12 @@ class MainGame extends Phaser.State {
       }
     }, this);
 
+    // Update Score
+    this.game.socket.on('updateScore', score => {
+      this.score = score;
+      console.log(this.score);
+    });
+
     map.createLayer('foreground');
 
     // Add Key Control Callback
@@ -141,9 +147,14 @@ class MainGame extends Phaser.State {
     // Graphic
     this.graphics = this.game.add.graphics({ x: 0, y: 0 });
 
-    this.createRequirement('onion');
-    this.createRequirement('onion');
-    this.createRequirement('onion');
+    SocketConnector.syncMenu(this.requirements, (menu) => {
+      console.log(menu);
+      this.createRequirement(menu.type, menu.idx, menu.hash);
+    });
+
+    // this.createRequirement('onion', 0);
+    // this.createRequirement('onion', 1);
+    // this.createRequirement('onion', 2);
   }
 
   update() {
@@ -193,8 +204,8 @@ class MainGame extends Phaser.State {
   }
 
   // Add Requirement
-  createRequirement(type) {
-    this.requirements.push(new MenuRequirement(this.game, this.requirements.length, type));
+  createRequirement(type, idx, hash) {
+    this.requirements.push(new MenuRequirement(this.game, idx, type, hash));
   }
 
   // Test Connector
@@ -206,6 +217,8 @@ class MainGame extends Phaser.State {
       if (roomMessage === 'Duplicate Room Name') {
         await SocketConnector.joinRoom('Test', 'Tester2');
       }
+
+      SocketConnector.setReady();
       res();
     })
   }
