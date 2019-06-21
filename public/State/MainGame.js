@@ -192,21 +192,11 @@ class MainGame extends Phaser.State {
     }
   }
 
-<<<<<<< HEAD
   // Add Requirement
   createRequirement(type) {
-    let sprite;
-
-    let x = this.requirements.length * MenuWidth + (this.requirements.length + 1) * 20
-
-    if (type === 'onion') sprite = this.game.add.sprite(x, 20, 'OnionSoupRequirement');
-
-    this.requirements.push(sprite);
+    this.requirements.push(new MenuRequirement(this.game, this.requirements.length, type));
   }
-  
-=======
 
->>>>>>> dev
   // Test Connector
   testConnector() {
     return new Promise(async (res, rej) => {
