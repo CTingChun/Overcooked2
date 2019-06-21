@@ -21,7 +21,6 @@ class ProgressBar {
   }
 
   update() {
-    this.graphics.alpha = 1;
     this.count += 1;
     this.graphics.moveTo(this.x, this.y);
 
@@ -46,7 +45,6 @@ class ProgressBar {
   }
 
   pause() {
-    this.graphics.alpha = 0;
     this.timer.pause();
   }
 }
