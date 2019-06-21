@@ -35,6 +35,9 @@ class Room {
     this.score = 0;
     this.ScoreUnit = 20;
 
+    // Time Count
+    this.timeCount = 120;
+
     Util.logger(`Room Instance ${this.hash}`);
   }
   // Getter
@@ -81,15 +84,23 @@ class Room {
       }
     }
 
+    this.startCountdown = () => {
+      this.timeCount -= 1;
+
+      this.room.emit('updateTimeCount', this.timeCount);
+
+      if (this.timeCount < 0) clearInterval(this.startCountdown);
+    }
+
     // Add Set Ready
     socket.on('setReady', (isReady=true, fn) => {
       this.clients.find(c => c.socketId === socket.id).isReady = isReady;
-      console.log('dfaf')
 
       if (!this.isPlaying) {
         this.isPlaying = true;
 
-        setInterval(this.emitMenu, 5000);
+        this.emitI = setInterval(this.emitMenu, 5000);
+        this.countI = setInterval(this.startCountdown, 1000);
       }
       fn('OK');
     });

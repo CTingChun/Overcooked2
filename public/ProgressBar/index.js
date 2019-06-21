@@ -21,14 +21,13 @@ class ProgressBar {
   }
 
   update() {
-    this.graphics.alpha = 1;
     this.count += 1;
     this.graphics.moveTo(this.x, this.y);
 
     this.graphics.clear();
     this.graphics.beginFill(0xAAAAAA);
     this.graphics.drawRect(this.x, this.y, this.width, this.height);
-    this.graphics.beginFill(0xffffff);
+    this.graphics.beginFill(0x619821);
     this.graphics.drawRect(this.x, this.y, this.width * (this.count / 100), this.height);
     this.graphics.endFill();
 
@@ -46,7 +45,6 @@ class ProgressBar {
   }
 
   pause() {
-    this.graphics.alpha = 0;
     this.timer.pause();
   }
 }
