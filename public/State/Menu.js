@@ -22,9 +22,9 @@ class Menu extends Phaser.State {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.bg = game.add.tileSprite(0, 0, 1280, 720, 'bg');
     this.word = game.add.image(200, 10, 'word');
-    this.btn1 = game.add.button(80, 500, 'btn1', this.onclick, this, 1, 1, 0);
+    this.btn1 = game.add.button(80, 500, 'btn1', this.onclick1, this, 1, 1, 0);
     game.add.text(250, 530, 'START', { font: 'bold 30px verdana', fill: '#fff' });
-    this.btn2 = game.add.image(500, 500, 'btn2');
+    this.btn2 = game.add.button(500, 500, 'btn2', this.onclick2, this, 1, 1, 0);
     game.add.text(645, 530, 'TUTORIAL', { font: 'bold 30px verdana', fill: '#fff' });
     this.btn3 = game.add.image(900, 500, 'btn3');
     game.add.text(1050, 530, 'SETTING', { font: 'bold 30px verdana', fill: '#fff' });
@@ -35,12 +35,16 @@ class Menu extends Phaser.State {
     this.menumusic.play();
   }
 
-  onclick() {
+  onclick1() {
     this.menumusic.stop();
     game.state.start('MainGame');
   }
+  onclick2() {
+    this.menumusic.stop();
+    game.state.start('Tutorial');
+  }
 
-    update() {
+  update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
     this.bg.tilePosition.x -= 2;
 
