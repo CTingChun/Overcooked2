@@ -20,10 +20,16 @@ class MainGame extends Phaser.State {
     
     // Food
     this.game.load.spritesheet('onion-1', './assets/onion-1.png',32, 32);
-    this.game.load.spritesheet('meat', './assets/onion-1.png', 32, 32);
-    this.game.load.spritesheet('mushroom', './assets/onion-1.png', 32, 32);
-    this.game.load.spritesheet('tomato', './assets/onion-1.png', 32, 32);
+    this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
+    this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
+    this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
 
+    this.onions = game.add.physicsGroup();
+    this.onions.enableBody = true;
+    this.mushrooms = game.add.physicsGroup();
+    this.mushrooms.enableBody = true;
+    this.tomatos = game.add.physicsGroup();
+    this.tomatos.enableBody = true;
     // Player
     this.game.load.spritesheet('player1', './assets/player1.png', 64, 64);
     this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
@@ -35,85 +41,94 @@ class MainGame extends Phaser.State {
     // Create Hook, 對這個 State 做 Init
     // Map
     this.initTilemap();
-
+    
     await this.testConnector();
 
-    // Get Player Info
-    let playerInfos = await SocketConnector.getPlayersInfo();
+    // // Get Player Info
+    // let playerInfos = await SocketConnector.getPlayersInfo();
 
-    this.players = playerInfos.map(p => {
-      let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
+    // this.players = playerInfos.map(p => {
+    //   let position = PlayerPosition[p.playerPosition];
+    //   let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
 
-      // Set Player
-      if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
+    //   // Set Player
+    //   if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
 
-      return newPlayer;
-    });
+    //   return newPlayer;
+    // });
 
-    // Sync Socket.
-    SocketConnector.syncAllSocket(this.players, this, this.syncUpCallback);
+    // // Sync Socket.
+    // SocketConnector.syncAllSocket(this.players, this, this.syncUpCallback);
 
-    // 新增對 Update Room 的反應
-    SocketConnector.addEventListner('updateRoom', roomInfo => {
-      let { members } = roomInfo;
-      let targetMember = null;
+    // // 新增對 Update Room 的反應
+    // SocketConnector.addEventListner('updateRoom', roomInfo => {
+    //   let { members } = roomInfo;
+    //   let targetMember = null;
 
-      // 尋找 target SocketId
-      // 減少成員
-      if (members.length < this.players.length) {
-        for (let player of this.players) {
-          if (members.findIndex(m => m.socketId === player.socketId) === -1) {
-            targetMember = player;
-            break;
-          }
-        }
+    //   // 尋找 target SocketId
+    //   // 減少成員
+    //   if (members.length < this.players.length) {
+    //     for (let player of this.players) {
+    //       if (members.findIndex(m => m.socketId === player.socketId) === -1) {
+    //         targetMember = player;
+    //         break;
+    //       }
+    //     }
 
-        // Remove Member
-        let playerIdx = this.players.findIndex(p => p.socketId === targetMember.socketId);
-        let player = this.players[playerIdx];
+    //     // Remove Member
+    //     let playerIdx = this.players.findIndex(p => p.socketId === targetMember.socketId);
+    //     let player = this.players[playerIdx];
 
-        player.delete();
+    //     player.delete();
 
-        // Remove From Players
-        this.players.splice(playerIdx, 1);
-        console.log(`Remove Player ${targetMember.socketId}.`);
-      }
-      // 新增成員 
-      else if (members.length > this.players.length) {
-        for (let member of members) {
-          if (this.players.findIndex(p => p.socketId === member.socketId) === -1) {
-            targetMember = member;
-            break;
-          }
-        }
+    //     // Remove From Players
+    //     this.players.splice(playerIdx, 1);
+    //     console.log(`Remove Player ${targetMember.socketId}.`);
+    //   }
+    //   // 新增成員 
+    //   else if (members.length > this.players.length) {
+    //     for (let member of members) {
+    //       if (this.players.findIndex(p => p.socketId === member.socketId) === -1) {
+    //         targetMember = member;
+    //         break;
+    //       }
+    //     }
 
-        // Add Player
-        let position = PlayerPosition[targetMember.playerPosition];
-        new Player(this.game, 'player1', position.x, position.y, targetMember);
-        console.log(`Add Player ${targetMember.socketId}.`);
-      }
-    }, this);
+    //     // Add Player
+    //     let position = PlayerPosition[targetMember.playerPosition];
+    //     this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
+    //     console.log(`Add Player ${targetMember.socketId}.`);
+    //   }
+    // }, this);
 
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
     this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
+
+    //Create Food Pool
+    this.onions.createMultiple(50, 'onion-1');
+    this.tomatos.createMultiple(50, 'tomato');
+    this.mushrooms.createMultiple(50, 'mushroom');
+
+
+    this.player = new Player(this.game, 'player1', 200, 200, '');
+    this.onion = new Food(this.game, 'onion-1', 100, 100);
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-
+    
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
-
     if(key === 'ArrowLeft') this.player.moveLeft();
     if(key === 'ArrowRight') this.player.moveRight();
     if(key === 'ArrowDown') this.player.moveDown();
     if(key === 'ArrowUp') this.player.moveUp();
+    if(key === ' ') console.log();
   }
 
   keyUp() {
@@ -122,8 +137,15 @@ class MainGame extends Phaser.State {
 
   syncUpCallback(idx, controlMes, target) {
     console.log(target);
-    if(controlMes === 'Go Left'){
+    console.log(controlMes);
+    if(controlMes === 'go Left'){
       target.sprite.animations.play('left');
+    } else if (controlMes === 'go Right'){
+      target.sprite.animations.play('right');
+    } else if (controlMes === 'go Up') {
+      target.sprite.animations.play('up');
+    } else if (controlMes === 'go Down') {
+      target.sprite.animations.play('down');
     }
   }
 

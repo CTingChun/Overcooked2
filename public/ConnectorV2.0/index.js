@@ -128,12 +128,15 @@ class SocketConnector {
       // Find Player
       let target = players.find(player => player.socketId === socketId);
 
+      console.log(socketId);
       // Update Sprite
       SocketConnector._recursiveUpdate(target.sprite.body, payload);
 
       // Call Back
       callback.call(context, 0, controlMes, target);
     })
+
+    console.log(`Sync Socket`);
   }
 
   /**
