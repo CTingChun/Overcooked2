@@ -86,6 +86,26 @@ class SocketConnector {
     });
   }
 
+  static getVegetableInfo(type) {
+    return new Promise((res, rej) => {
+      try {
+        game.socket.emit('getVegetableInfo', type, (data) => {
+          res(data);
+        });
+      } catch (err) {
+        rej();
+      }
+    });
+  }
+
+  static addVegetable(type, payload) {
+    game.socket.emit('addVegetable', type, payload);
+  }
+
+  static removeVegetable(type, hashString) {
+    game.socket.emit('removeVegetable', type, hashString);
+  }
+
   /**
    * 
    * @param { Boolean } isReady 
@@ -99,6 +119,12 @@ class SocketConnector {
       } catch (err) {
         rej();
       }
+    })
+  }
+
+  static syncVegetable() {
+    game.socket.on('updateVegetable', (type, payload) => {
+      console.log(type, payload);
     })
   }
 
