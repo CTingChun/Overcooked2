@@ -94,7 +94,6 @@ class MainGame extends Phaser.State {
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
       let newPlayer;
-      console.log(p.playerPosition);
       if (p.playerPosition == 0) {
         newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
@@ -153,7 +152,6 @@ class MainGame extends Phaser.State {
 
         // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        console.log(targetMember.playerPosition);
 
         //Set player with diff sprite
         if (targetMember.playerPosition == 0) {
@@ -192,7 +190,6 @@ class MainGame extends Phaser.State {
     // Update Score
     this.game.socket.on('updateScore', score => {
       this.score = score;
-      console.log(this.score);
     });
 
     map.createLayer('foreground');
@@ -296,7 +293,6 @@ class MainGame extends Phaser.State {
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(target);
     if (!target.isHolding) {
       if (controlMes === 'go Left') {
         target.sprite.animations.play('left');
