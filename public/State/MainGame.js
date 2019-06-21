@@ -45,6 +45,9 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('player3', './assets/player3.png', 28, 50);
     this.game.load.spritesheet('player4', './assets/player4.png', 28, 48);
 
+    //Time
+    this.game.load.image('time','./assets/timing.png');
+
     this.game.load.onLoadComplete.add(() => {
 
     });
@@ -170,6 +173,10 @@ class MainGame extends Phaser.State {
 
     map.createLayer('foreground');
 
+    //Add timing img
+    this.timing = game.add.sprite(1050,600,'time');
+    this.timing.scale.setTo(0.8,0.8);
+
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
     this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
@@ -186,6 +193,8 @@ class MainGame extends Phaser.State {
       console.log(menu);
       this.createRequirement(menu.type, menu.idx, menu.hash);
     });
+
+    
 
     // this.createRequirement('onion', 0);
     // this.createRequirement('onion', 1);
