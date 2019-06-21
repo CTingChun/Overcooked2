@@ -36,7 +36,7 @@ class Room {
     this.ScoreUnit = 20;
 
     // Time Count
-    this.timeCount = 120;
+    this.timeCount = 20;
 
     Util.logger(`Room Instance ${this.hash}`);
   }
@@ -87,9 +87,12 @@ class Room {
     this.startCountdown = () => {
       this.timeCount -= 1;
 
-      this.room.emit('updateTimeCount', this.timeCount);
+      if (this.timeCount < 0) {
+        clearInterval(this.countI);
+        this.timeCount = 0;
+      }
 
-      if (this.timeCount < 0) clearInterval(this.startCountdown);
+      this.room.emit('updateTimeCount', this.timeCount);
     }
 
     // Add Set Ready
@@ -116,19 +119,27 @@ class Room {
     })
 
     // Update Sprite
-    socket.on('updateSprite', (payload, controlMes) => {
-      this.room.emit('updatePlayerSprite', payload, socket.id, controlMes);
+    socket.on('updateSprite', (payload, controlMes, socketId) => {
+      if (socketId) this.room.emit('updatePlayerSprite', payload, socketId, controlMes);
+      else this.room.emit('updatePlayerSprite', payload, socket.id, controlMes);
     });
 
     // Update Sprite Body
-    socket.on('updateSpriteBody', (payload, controlMes) => {
-      this.room.emit('updatePlayerSpriteBody', payload, socket.id, controlMes);
+    socket.on('updateSpriteBody', (payload, controlMes, socketId) => {
+      if (socketId) this.room.emit('updatePlayerSpriteBody', payload, socketId, controlMes);
+      else this.room.emit('updatePlayerSpriteBody', payload, socket.id, controlMes);
     });
 
     // Get Room Players Info
     socket.on('getPlayersInfo', (fn) => {
       // Return Info.
       fn(this.clients);
+    });
+
+    // Get Room Players Info
+    socket.on('getScore', (fn) => {
+      // Return Info.
+      fn(this.score);
     });
 
     // Get Onions Info

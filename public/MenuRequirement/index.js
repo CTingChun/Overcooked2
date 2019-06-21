@@ -3,6 +3,7 @@ class MenuRequirement {
     this.game = game;
     this.hash = hash;
     this.idx = idx;
+    this.type = type;
 
     // x position
     let x = idx * MenuWidth + (idx + 1) * 20
