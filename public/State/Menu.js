@@ -23,17 +23,11 @@ class Menu extends Phaser.State {
     this.bg = game.add.tileSprite(0, 0, 1280, 720, 'bg');
     this.word = game.add.image(200, 10, 'word');
     this.btn1 = game.add.button(280, 500, 'btn1', this.onclick1, this, 1, 1, 0);
-    this.btn1.inputEnabled = true;
-    this.text1 = game.add.text(450, 530, 'START', { font: 'bold 30px verdana', fill: '#fff' });
+    game.add.text(450, 530, 'START', { font: 'bold 30px verdana', fill: '#fff' });
     this.btn2 = game.add.button(700, 500, 'btn2', this.onclick2, this, 1, 1, 0);
-    this.btn2.inputEnabled = true;
     game.add.text(850, 530, 'TUTORIAL', { font: 'bold 30px verdana', fill: '#fff' });
-    // this.btn3 = game.add.image(900, 500, 'btn3');
-    // this.btn3.inputEnabled = true;
-    // game.add.text(1050, 530, 'SETTING', { font: 'bold 30px verdana', fill: '#fff' });
     this.croco = game.add.image(230, 390, 'croco');
     this.mouse = game.add.image(650, 400, 'mouse');
-    // this.taco = game.add.image(850, 400, 'taco');
     this.menumusic = game.add.audio('menusound');
     this.menumusic.play();
 

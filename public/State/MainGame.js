@@ -32,6 +32,9 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+    this.game.load.image('onion-icon', './assets/onion-icon', 32, 32);
+    this.game.load.image('tomato-icon', './assets/tomato-icon', 32, 32);
+    this.game.load.image('mushroom-icon', './assets/mushroom-icon', 32, 32);
 
     //Pot
     this.game.load.image('pot', './assets/pot.png', 82, 105);
@@ -98,13 +101,13 @@ class MainGame extends Phaser.State {
         newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 1) {
-        newPlayer = new Player(this.game, 'player2', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 2) {
-        newPlayer = new Player(this.game, 'player3', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 3) {
-        newPlayer = new Player(this.game, 'player4', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
 
       // Set Player
@@ -158,13 +161,13 @@ class MainGame extends Phaser.State {
           this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 1) {
-          this.players.push(new Player(this.game, 'player2', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 2) {
-          this.players.push(new Player(this.game, 'player3', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 3) {
-          this.players.push(new Player(this.game, 'player4', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         console.log(`Add Player ${targetMember.socketId}.`);
         map.createLayer('foreground');
@@ -310,6 +313,8 @@ class MainGame extends Phaser.State {
   }
 
   syncUpCallback(idx, controlMes, target) {
+    target.playerLabel.x = target.sprite.body.x + 30;
+    target.playerLabel.y = target.sprite.body.y - 20;
     if (!target.isHolding) {
       if (controlMes === 'go Left') {
         target.sprite.animations.play('left');

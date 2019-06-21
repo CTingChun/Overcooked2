@@ -119,13 +119,15 @@ class Room {
     })
 
     // Update Sprite
-    socket.on('updateSprite', (payload, controlMes) => {
-      this.room.emit('updatePlayerSprite', payload, socket.id, controlMes);
+    socket.on('updateSprite', (payload, controlMes, socketId) => {
+      if (socketId) this.room.emit('updatePlayerSprite', payload, socketId, controlMes);
+      else this.room.emit('updatePlayerSprite', payload, socket.id, controlMes);
     });
 
     // Update Sprite Body
-    socket.on('updateSpriteBody', (payload, controlMes) => {
-      this.room.emit('updatePlayerSpriteBody', payload, socket.id, controlMes);
+    socket.on('updateSpriteBody', (payload, controlMes, socketId) => {
+      if (socketId) this.room.emit('updatePlayerSpriteBody', payload, socketId, controlMes);
+      else this.room.emit('updatePlayerSpriteBody', payload, socket.id, controlMes);
     });
 
     // Get Room Players Info
