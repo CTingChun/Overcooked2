@@ -11,6 +11,9 @@ class MainGame extends Phaser.State {
     // Score Related
     this.score = 0;
     this.requirements = [];
+
+    this.currentCu1ProgressBar = null;
+    this.currentCu2ProgressBar = null;
   }
 
   preload() {
@@ -95,8 +98,6 @@ class MainGame extends Phaser.State {
         newPlayer = new Player(this.game, 'player4', position.x, position.y, p.socketId, p.playerPosition);
       }
 
-
-
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
 
@@ -162,6 +163,12 @@ class MainGame extends Phaser.State {
       }
     }, this);
 
+    // Get Tilemap Info
+    let cut1 = this.map.objects.meta.find(o => o.name == 'cut1');
+    let cut2 = this.map.objects.meta.find(o => o.name == 'cut2');
+    this.cut1Rect = new Phaser.Rectangle(cut1.x, cut1.y, cut1.width, cut1.height);
+    this.cut2Rect = new Phaser.Rectangle(cut2.x, cut2.y, cut2.width, cut2.height);
+
     // Update Score
     this.game.socket.on('updateScore', score => {
       this.score = score;
@@ -208,9 +215,20 @@ class MainGame extends Phaser.State {
       }
 
     }
+
+    // Ready
     if (!this.isReady) {
       SocketConnector.setReady();
       this.isReady = true;
+    }
+
+    // Clear Progress Bar
+    if (this.currentCu1ProgressBar && !Phaser.Rectangle.contains(this.cut1Rect, this.player.sprite.x, this.player.sprite.y)) {
+      this.currentCu1ProgressBar.pause();
+    }
+
+    if (this.currentCu2ProgressBar && !Phaser.Rectangle.contains(this.cut2Rect, this.player.sprite.x, this.player.sprite.y)) {
+      this.currentCu2ProgressBar.pause();
     }
   }
 
@@ -218,25 +236,30 @@ class MainGame extends Phaser.State {
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
+
     if (key === 'ArrowLeft') this.player.moveLeft();
-    if (key === 'ArrowRight') this.player.moveRight();
-    if (key === 'ArrowDown') this.player.moveDown();
-    if (key === 'ArrowUp') this.player.moveUp();
+    else if (key === 'ArrowRight') this.player.moveRight();
+    else if (key === 'ArrowDown') this.player.moveDown();
+    else if (key === 'ArrowUp') this.player.moveUp();
+
+    if (key === 'x') {
+      // Net
+      game.socket.emit('updateSprite', {}, 'press X');
+    }
     if (key === ' ') console.log();
   }
 
   keyUp(event) {
     let { key } = event;
-    if (key === 'ArrowLeft') this.player.cleanVelocityX();
-    if (key === 'ArrowRight') this.player.cleanVelocityX();
-    if (key === 'ArrowDown') this.player.cleanVelocityY();
-    if (key === 'ArrowUp') this.player.cleanVelocityY();
+    let { keyboard } = this.game.input;
+    let { KeyCode } = Phaser;
+
+    if (!keyboard.isDown(KeyCode.RIGHT) && !keyboard.isDown(KeyCode.LEFT)) this.player.cleanVelocityX();
+    if (!keyboard.isDown(KeyCode.UP) && !keyboard.isDown(KeyCode.DOWN)) this.player.cleanVelocityY();
     if (key === ' ') console.log();
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(target);
-    console.log(controlMes);
     if (controlMes === 'go Left') {
       target.sprite.animations.play('left');
     } else if (controlMes === 'go Right') {
@@ -249,6 +272,22 @@ class MainGame extends Phaser.State {
       target.sprite.animations.stop(null, true);
     } else if (controlMes === 'stop Y') {
       target.sprite.animations.stop(null, true);
+    } else if (controlMes === 'press X') {
+      // Press X
+      if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+        if (this.currentCu1ProgressBar != null) {
+          this.currentCu1ProgressBar.timer.resume();
+        } else {
+          this.currentCu1ProgressBar = new ProgressBar(this.game, 330, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu1ProgressBar = null }, this);
+        }
+      }
+      if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+        if (this.currentCu2ProgressBar != null) {
+          this.currentCu2ProgressBar.timer.resume();
+        } else {
+          this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null }, this);
+        }
+      }
     }
   }
 
