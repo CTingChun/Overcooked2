@@ -98,6 +98,18 @@ class SocketConnector {
     });
   }
 
+  static getScore(type) {
+    return new Promise((res, rej) => {
+      try {
+        game.socket.emit('getScore', (data) => {
+          res(data);
+        });
+      } catch (err) {
+        rej();
+      }
+    });
+  }
+
   static addVegetable(type, payload) {
     game.socket.emit('addVegetable', type, payload);
   }
