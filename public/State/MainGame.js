@@ -440,13 +440,14 @@ class MainGame extends Phaser.State {
             if (target.holdingObject === 'onionPlate' && menu.type === 'onion') {
               SocketConnector.deleteMenu(menu);
               menu.delete();
+              target.clearAllFlag(true);
               break;
             }
           }
         }
       }
 
-      if (Phaser.Rectangle.contains(this.garbageRect, target.sprite.x, target.sprite.y)) {
+      if (Phaser.Rectangle.contains(this.garbageRect, target.sprite.x, target.sprite.y) && controlMes === 'press X') {
         console.log('dfasf')
         target.clearAllFlag();
       }

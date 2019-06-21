@@ -133,8 +133,8 @@ class Player {
     this.sprite.destroy();
   }
 
-  clearAllFlag() {
-    if (!this.isPlate) {
+  clearAllFlag(isClearPlate=false) {
+    if (!this.isPlate && !this.isPot) {
       // Constant Variable
       this.isHolding = false;
 
@@ -145,6 +145,10 @@ class Player {
       this.isPot = false;
       this.isPlate = false;
 
+      this.holdingObject = null;
+    } 
+
+    if (isClearPlate) {
       this.holdingObject = null;
     }
   }
