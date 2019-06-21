@@ -21,19 +21,27 @@ class Menu extends Phaser.State {
     // Create Hook, 對這個 State 做 Init
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.bg = game.add.tileSprite(0, 0, 1280, 720, 'bg');
-    this.word = game.add.image(200, 0, 'word');
-    // 之後做成game.add.button(100, 500, 'btn1', this.onclick, this, 1, 1, 0);
-    this.btn1 = game.add.image(100, 500, 'btn1');
-    game.add.text(270, 530, 'START', { font: 'bold 30px verdana', fill: '#fff' });
-    this.btn2 = game.add.image(500, 500, 'btn2');
+    this.word = game.add.image(200, 10, 'word');
+    this.btn1 = game.add.button(80, 500, 'btn1', this.onclick1, this, 1, 1, 0);
+    game.add.text(250, 530, 'START', { font: 'bold 30px verdana', fill: '#fff' });
+    this.btn2 = game.add.button(500, 500, 'btn2', this.onclick2, this, 1, 1, 0);
     game.add.text(645, 530, 'TUTORIAL', { font: 'bold 30px verdana', fill: '#fff' });
     this.btn3 = game.add.image(900, 500, 'btn3');
     game.add.text(1050, 530, 'SETTING', { font: 'bold 30px verdana', fill: '#fff' });
-    this.croco = game.add.image(50, 390, 'croco');
+    this.croco = game.add.image(30, 390, 'croco');
     this.mouse = game.add.image(450, 400, 'mouse');
     this.taco = game.add.image(850, 400, 'taco');
-    var menumusic = game.add.audio('menusound');
-    menumusic.play();
+    this.menumusic = game.add.audio('menusound');
+    this.menumusic.play();
+  }
+
+  onclick1() {
+    this.menumusic.stop();
+    game.state.start('MainGame');
+  }
+  onclick2() {
+    this.menumusic.stop();
+    game.state.start('Tutorial');
   }
 
   update() {

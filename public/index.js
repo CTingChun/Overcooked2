@@ -20,8 +20,9 @@ var game = new Phaser.Game(WindowWidth, WindowHeight, Phaser.AUTO);
 // Add Game State
 game.state.add('Menu', new Menu());
 game.state.add('Tutorial', new Tutorial());
+game.state.add('Room', new Room());
 game.state.add('MainGame', new MainGame());
 game.state.add('EndGameMenu', new EndGameMenu());
 
 // Start Game State, 這邊測試的時候可以自己改掉
-game.state.start('MainGame');
+game.state.start('Tutorial');
