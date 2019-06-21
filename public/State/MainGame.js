@@ -6,6 +6,10 @@ class MainGame extends Phaser.State {
     // Players Object
     this.players = [];
     this.player = null;
+
+    // Score Related
+    this.score = 0;
+    this.requirements = [];
   }
 
   preload() {
@@ -22,6 +26,11 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+
+    // Dish Requirement
+    this.game.load.image('MashroomSoupRequirement', './assets/Mashroom-Dish-Requirement.png');
+    this.game.load.image('OnionSoupRequirement', './assets/Onion-Soup-Requirement.png');
+    this.game.load.image('TomatoSoupRequirement', './assets/Tomato-Soup-Requirement.png');
 
     this.onions = game.add.physicsGroup();
     this.onions.enableBody = true;
@@ -128,7 +137,12 @@ class MainGame extends Phaser.State {
     this.tomatos.createMultiple(50, 'tomato');
     this.mushrooms.createMultiple(50, 'mushroom');
 
+    // Graphic
+    this.graphics = this.game.add.graphics({ x: 0, y: 0 });
 
+    this.createRequirement('onion');
+    this.createRequirement('onion');
+    this.createRequirement('onion');
   }
 
   update() {
@@ -165,6 +179,16 @@ class MainGame extends Phaser.State {
     }
   }
 
+  // Add Requirement
+  createRequirement(type) {
+    let sprite;
+
+    let x = this.requirements.length * MenuWidth + (this.requirements.length + 1) * 20
+
+    if (type === 'onion') sprite = this.game.add.sprite(x, 20, 'OnionSoupRequirement');
+
+    this.requirements.push(sprite);
+  }
   
   // Test Connector
   testConnector() {

@@ -24,3 +24,6 @@ var PlayerPosition = {
   '2': Player3Pos,
   '3': Player4Pos
 };
+
+var MenuWidth = 115;
+var MenuHeight = 160;
