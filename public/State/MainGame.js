@@ -12,11 +12,10 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/try1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('green', 'assets/blockGreen.png');
-    game.load.image('red', 'assets/blockRed.png');
-    game.load.image('tiles', 'assets/template.jpg');
+    game.load.image('red', 'assets/blockRed10.png');
+    game.load.image('tiles', 'assets/Map.jpg');
     
     // Food
     this.game.load.image('onion-1', './assets/onion-1.png');
@@ -25,10 +24,27 @@ class MainGame extends Phaser.State {
   async create() {
     // Create Hook, 對這個 State 做 Init
     // Map
-    this.initTilemap();
 
     await this.testConnector();
 
+    var map = game.add.tilemap('map');
+
+    this.map = map;
+
+    map.addTilesetImage('Map10', 'tiles');
+    map.addTilesetImage('blockRed10', 'red');
+
+    map.createLayer('base');
+
+    var collisionLayer = map.createLayer('collision');
+    this.collisionLayer = collisionLayer;
+
+    collisionLayer.visible = false;
+
+    map.setCollisionByExclusion([], true, this.collisionLayer);
+    collisionLayer.resizeWorld();
+
+    
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
@@ -86,6 +102,8 @@ class MainGame extends Phaser.State {
       }
     }, this);
 
+    map.createLayer('foreground');
+
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
     this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
@@ -115,28 +133,7 @@ class MainGame extends Phaser.State {
     console.log(idx, controlMes, target);
   }
 
-  initTilemap() {
-    var map = game.add.tilemap('map');
-
-    this.map = map;
-
-    map.addTilesetImage('try1', 'tiles');
-    map.addTilesetImage('blockGreen', 'green');
-    map.addTilesetImage('blockRed', 'red');
-
-    map.createLayer('base');
-
-    var collisionLayer = map.createLayer('collision');
-    this.collisionLayer = collisionLayer;
-
-    collisionLayer.visible = false;
-
-    map.setCollisionByExclusion([], true, this.collisionLayer);
-    collisionLayer.resizeWorld();
-
-    map.createLayer('foreground');
-  }
-
+  
   // Test Connector
   testConnector() {
     return new Promise(async (res, rej) => {
