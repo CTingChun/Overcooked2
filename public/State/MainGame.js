@@ -79,7 +79,7 @@ class MainGame extends Phaser.State {
           }
         }
 
-        // Add Player
+        // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
         this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
