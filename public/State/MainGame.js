@@ -12,29 +12,60 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/try1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map5.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('green', 'assets/blockGreen.png');
-    game.load.image('red', 'assets/blockRed.png');
-    game.load.image('tiles', 'assets/template.jpg');
-    
+    game.load.image('red', 'assets/blockRed5.png');
+    game.load.image('tiles', 'assets/Map.jpg');
+
     // Food
-    this.game.load.image('onion-1', './assets/onion-1.png');
+    this.game.load.spritesheet('onion-1', './assets/onion-1.png', 32, 32);
+    this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
+    this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
+    this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+
+    this.onions = game.add.physicsGroup();
+    this.onions.enableBody = true;
+    this.mushrooms = game.add.physicsGroup();
+    this.mushrooms.enableBody = true;
+    this.tomatos = game.add.physicsGroup();
+    this.tomatos.enableBody = true;
+    // Player
+    this.game.load.spritesheet('player1', './assets/player1.png', 64, 64);
+    this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
+    this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
+    this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
   }
 
   async create() {
     // Create Hook, 對這個 State 做 Init
     // Map
-    this.initTilemap();
 
     await this.testConnector();
+
+    var map = game.add.tilemap('map');
+
+    this.map = map;
+
+    map.addTilesetImage('Map5', 'tiles');
+    map.addTilesetImage('blockRed5', 'red');
+
+    map.createLayer('base');
+
+    var collisionLayer = map.createLayer('collision');
+    this.collisionLayer = collisionLayer;
+
+    //collisionLayer.visible = true;
+
+    map.setCollisionByExclusion([], true, this.collisionLayer);
+    collisionLayer.resizeWorld();
+
 
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'onion-1', position.x, position.y, p.socketId);
+      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -79,63 +110,74 @@ class MainGame extends Phaser.State {
           }
         }
 
-        // Add Player
+        // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
+        this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
+        map.createLayer('foreground');
       }
     }, this);
+
+    map.createLayer('foreground');
 
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
     this.game.input.keyboard.addCallbacks(this, this.keyDone, this.keyUp);
+
+    //Create Food Pool
+    this.onions.createMultiple(50, 'onion-1');
+    this.tomatos.createMultiple(50, 'tomato');
+    this.mushrooms.createMultiple(50, 'mushroom');
+
+
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-
+    var i;  
+    for (i = 0; i < this.players.length; i++)
+      this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
+    if (key === 'ArrowLeft') this.player.moveLeft();
+    if (key === 'ArrowRight') this.player.moveRight();
+    if (key === 'ArrowDown') this.player.moveDown();
+    if (key === 'ArrowUp') this.player.moveUp();
+    if (key === ' ') console.log();
 
-    if(key === 'ArrowLeft') this.player.moveLeft();
-    if(key === 'ArrowRight') this.player.moveRight();
-    if(key === 'ArrowDown') this.player.moveDown();
-    if(key === 'ArrowUp') this.player.moveUp();
   }
 
-  keyUp() {
-
+  keyUp(event) {
+    let { key } = event;
+    if (key === 'ArrowLeft') this.player.cleanVelocityX();
+    if (key === 'ArrowRight') this.player.cleanVelocityX();
+    if (key === 'ArrowDown') this.player.cleanVelocityY();
+    if (key === 'ArrowUp') this.player.cleanVelocityY();
+    if (key === ' ') console.log();
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(idx, controlMes, target);
+    console.log(target);
+    console.log(controlMes);
+    if (controlMes === 'go Left') {
+      target.sprite.animations.play('left');
+    } else if (controlMes === 'go Right') {
+      target.sprite.animations.play('right');
+    } else if (controlMes === 'go Up') {
+      target.sprite.animations.play('up');
+    } else if (controlMes === 'go Down') {
+      target.sprite.animations.play('down');
+    } else if(controlMes === 'stop X'){
+      target.sprite.animations.stop(null,true);
+    } else if(controlMes === 'stop Y'){
+      target.sprite.animations.stop(null,true);
+    }
   }
 
-  initTilemap() {
-    var map = game.add.tilemap('map');
-
-    this.map = map;
-
-    map.addTilesetImage('try1', 'tiles');
-    map.addTilesetImage('blockGreen', 'green');
-    map.addTilesetImage('blockRed', 'red');
-
-    map.createLayer('base');
-
-    var collisionLayer = map.createLayer('collision');
-    this.collisionLayer = collisionLayer;
-
-    collisionLayer.visible = false;
-
-    map.setCollisionByExclusion([], true, this.collisionLayer);
-    collisionLayer.resizeWorld();
-
-    map.createLayer('foreground');
-  }
 
   // Test Connector
   testConnector() {
