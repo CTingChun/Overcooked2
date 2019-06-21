@@ -12,22 +12,42 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/try1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('green', 'assets/blockGreen.png');
-    game.load.image('red', 'assets/blockRed.png');
-    game.load.image('tiles', 'assets/template.jpg');
+    //game.load.image('green', 'assets/blockGreen.png');
+    game.load.image('red', 'assets/blockRed10.png');
+    game.load.image('tiles', 'assets/Map.jpg');
     
     // Food
-    this.game.load.image('onion-1', './assets/onion-1.png');
+    this.game.load.image('onion-1', 'assets/onion-1.png');
   }
 
   async create() {
     // Create Hook, 對這個 State 做 Init
     // Map
-    this.initTilemap();
+    //this.initTilemap();
 
     await this.testConnector();
+
+    var map = game.add.tilemap('map');
+
+    this.map = map;
+
+    map.addTilesetImage('Map10', 'tiles');
+    //map.addTilesetImage('blockGreen', 'green');
+    map.addTilesetImage('blockRed10', 'red');
+
+    map.createLayer('base');
+
+    var collisionLayer = map.createLayer('collision');
+    this.collisionLayer = collisionLayer;
+
+    collisionLayer.visible = true;
+
+    map.setCollisionByExclusion([], true, this.collisionLayer);
+    collisionLayer.resizeWorld();
+
+    
 
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
@@ -38,12 +58,13 @@ class MainGame extends Phaser.State {
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
+      this.game.physics.arcade.collide(this.players, this.collisionLayer);
 
       return newPlayer;
     });
 
     // Sync Socket.
-    SocketConnector.syncAllSocket(this.players, this, this.syncUpCallback);
+    SocketConnector.syncAllSocket(this.players);
 
     // 新增對 Update Room 的反應
     SocketConnector.addEventListner('updateRoom', roomInfo => {
@@ -81,10 +102,15 @@ class MainGame extends Phaser.State {
 
         // Add Player
         let position = PlayerPosition[targetMember.playerPosition];
-        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
+        new Player(this.game, 'onion-1', position.x, position.y, targetMember);
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
+
+    
+    map.createLayer('foreground');
+
+
 
     // Add Key Control Callback
     this.game.input.keyboard.createCursorKeys();
@@ -111,18 +137,14 @@ class MainGame extends Phaser.State {
 
   }
 
-  syncUpCallback(idx, controlMes, target) {
-    console.log(idx, controlMes, target);
-  }
-
-  initTilemap() {
+  /*initTilemap() {
     var map = game.add.tilemap('map');
 
     this.map = map;
 
-    map.addTilesetImage('try1', 'tiles');
-    map.addTilesetImage('blockGreen', 'green');
-    map.addTilesetImage('blockRed', 'red');
+    map.addTilesetImage('Map10', 'tiles');
+    //map.addTilesetImage('blockGreen', 'green');
+    map.addTilesetImage('blockRed10', 'red');
 
     map.createLayer('base');
 
@@ -135,7 +157,7 @@ class MainGame extends Phaser.State {
     collisionLayer.resizeWorld();
 
     map.createLayer('foreground');
-  }
+  }*/
 
   // Test Connector
   testConnector() {
