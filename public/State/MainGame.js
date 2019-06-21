@@ -65,7 +65,7 @@ class MainGame extends Phaser.State {
 
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'onion-1', position.x, position.y, p.socketId);
+      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -112,7 +112,7 @@ class MainGame extends Phaser.State {
 
         // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        this.players.push(new Player(this.game, 'onion-1', position.x, position.y, targetMember.socketId));
+        this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
       }
     }, this);
@@ -129,8 +129,6 @@ class MainGame extends Phaser.State {
     this.mushrooms.createMultiple(50, 'mushroom');
 
 
-    this.player = new Player(this.game, 'player1', 200, 200, '');
-    this.onion = new Food(this.game, 'onion-1', 100, 100);
   }
 
   update() {
