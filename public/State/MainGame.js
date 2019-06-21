@@ -187,16 +187,15 @@ class MainGame extends Phaser.State {
 
   keyUp(event) {
     let { key } = event;
-    if (key === 'ArrowLeft') this.player.cleanVelocityX();
-    if (key === 'ArrowRight') this.player.cleanVelocityX();
-    if (key === 'ArrowDown') this.player.cleanVelocityY();
-    if (key === 'ArrowUp') this.player.cleanVelocityY();
+    let { keyboard } = this.game.input;
+    let { KeyCode } = Phaser;
+
+    if (!keyboard.isDown(KeyCode.RIGHT) && !keyboard.isDown(KeyCode.LEFT)) this.player.cleanVelocityX();
+    if (!keyboard.isDown(KeyCode.UP) && !keyboard.isDown(KeyCode.DOWN)) this.player.cleanVelocityY();
     if (key === ' ') console.log();
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(target);
-    console.log(controlMes);
     if (controlMes === 'go Left') {
       target.sprite.animations.play('left');
     } else if (controlMes === 'go Right') {
