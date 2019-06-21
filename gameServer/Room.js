@@ -36,7 +36,7 @@ class Room {
     this.ScoreUnit = 20;
 
     // Time Count
-    this.timeCount = 120;
+    this.timeCount = 20;
 
     Util.logger(`Room Instance ${this.hash}`);
   }
@@ -87,9 +87,12 @@ class Room {
     this.startCountdown = () => {
       this.timeCount -= 1;
 
-      this.room.emit('updateTimeCount', this.timeCount);
+      if (this.timeCount < 0) {
+        clearInterval(this.countI);
+        this.timeCount = 0;
+      }
 
-      if (this.timeCount < 0) clearInterval(this.startCountdown);
+      this.room.emit('updateTimeCount', this.timeCount);
     }
 
     // Add Set Ready
@@ -131,6 +134,12 @@ class Room {
     socket.on('getPlayersInfo', (fn) => {
       // Return Info.
       fn(this.clients);
+    });
+
+    // Get Room Players Info
+    socket.on('getScore', (fn) => {
+      // Return Info.
+      fn(this.score);
     });
 
     // Get Onions Info

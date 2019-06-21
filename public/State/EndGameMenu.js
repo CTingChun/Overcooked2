@@ -12,7 +12,7 @@ class EndGameMenu extends Phaser.State {
     this.game.load.spritesheet('star', 'assets/star.png', 94, 100);
   }
 
-  create() {
+  async create() {
     // Create Hook, 對這個 State 做 Init
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.bg = game.add.image(0, 0, 'bg');
@@ -20,7 +20,7 @@ class EndGameMenu extends Phaser.State {
     game.add.text(350, 270, 'Orders Diliever', { font: 'bold 30px verdana', fill: '#fff' });
     game.add.text(350, 330, 'Tips', { font: 'bold 30px verdana', fill: '#fff' });
     game.add.text(350, 380, 'Orders Failed', { font: 'bold 30px verdana', fill: '#fff' });
-    game.add.text(350, 470, 'Total', { font: 'bold 36px verdana', fill: '#fff' });
+    game.add.text(350, 470, `Total: ${await SocketConnector.getScore()}`, { font: 'bold 36px verdana', fill: '#fff' });
     this.ani1 = game.add.sprite(500, 210, 'star');
     this.ani1.anchor.setTo(0.5, 0.5);
     this.ani1.animations.add('flyfly1', [ 0, 1, 2, 3, 4 ], 10, true);
