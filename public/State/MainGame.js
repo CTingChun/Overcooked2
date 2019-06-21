@@ -40,13 +40,13 @@ class MainGame extends Phaser.State {
     this.tomatos = game.add.physicsGroup();
     this.tomatos.enableBody = true;
     // Player
-    this.game.load.spritesheet('player1', './assets/player1.png', 64, 64);
-    this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
-    this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
-    this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
+    this.game.load.spritesheet('player1', './assets/player1.png', 36, 50);
+    this.game.load.spritesheet('player2', './assets/player2.png', 32, 52);
+    this.game.load.spritesheet('player3', './assets/player3.png', 28, 50);
+    this.game.load.spritesheet('player4', './assets/player4.png', 28, 48);
 
     this.game.load.onLoadComplete.add(() => {
-      
+
     });
   }
 
@@ -77,9 +77,25 @@ class MainGame extends Phaser.State {
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
+    //new player with different sprite
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
-      let newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId);
+      let newPlayer;
+      console.log(p.playerPosition);
+      if (p.playerPosition == 0) {
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
+      }
+      if (p.playerPosition == 1) {
+        newPlayer = new Player(this.game, 'player2', position.x, position.y, p.socketId, p.playerPosition);
+      }
+      if (p.playerPosition == 2) {
+        newPlayer = new Player(this.game, 'player3', position.x, position.y, p.socketId, p.playerPosition);
+      }
+      if (p.playerPosition == 3) {
+        newPlayer = new Player(this.game, 'player4', position.x, position.y, p.socketId, p.playerPosition);
+      }
+
+
 
       // Set Player
       if (newPlayer.socketId === this.game.socket.id) this.player = newPlayer;
@@ -126,7 +142,21 @@ class MainGame extends Phaser.State {
 
         // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
+        console.log(targetMember.playerPosition);
+
+        //Set player with diff sprite
+        if (targetMember.playerPosition == 0) {
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+        }
+        if (targetMember.playerPosition == 1) {
+          this.players.push(new Player(this.game, 'player2', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+        }
+        if (targetMember.playerPosition == 2) {
+          this.players.push(new Player(this.game, 'player3', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+        }
+        if (targetMember.playerPosition == 3) {
+          this.players.push(new Player(this.game, 'player4', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+        }
         console.log(`Add Player ${targetMember.socketId}.`);
         map.createLayer('foreground');
       }
@@ -167,6 +197,16 @@ class MainGame extends Phaser.State {
 
     for (let i = 0; i < this.players.length; i++) {
       this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
+
+      for (let j = 0; j < this.players.length; j++) {
+        if (i != j) {
+          this.game.physics.arcade.collide(this.players[i].sprite, this.players[j].sprite);
+        }
+        else {
+
+        }
+      }
+
     }
     if (!this.isReady) {
       SocketConnector.setReady();
