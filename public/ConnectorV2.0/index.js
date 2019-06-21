@@ -128,6 +128,25 @@ class SocketConnector {
     })
   }
 
+  static syncMenu(requirements, callback) {
+    game.socket.on('updateMenu', (menus) => {
+      callback(menus);
+    });
+    game.socket.on('deleteMenu', (hash) => {
+      let idx = requirements.findIndex(r => r.hash === hash);
+
+      if (idx !== -1) {
+        console.log(`Menu ${hash} Delete.`)
+        requirements[idx].delete();
+        requirements.splice(idx, 1);
+      }
+    })
+  }
+
+  static deleteMenu(menu) {
+    game.socket.emit('completeMenu', menu.idx, menu.hash);
+  }
+
   /**
    * 
    * @param { Array } players, Array Of Player Class
