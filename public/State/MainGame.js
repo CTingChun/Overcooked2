@@ -2,6 +2,7 @@ class MainGame extends Phaser.State {
   constructor() {
     // Constructor, 基本上不用加東西
     super();
+    this.isReady = false;
 
     // Players Object
     this.players = [];
@@ -16,9 +17,9 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map5.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('red', 'assets/blockRed10.png');
+    game.load.image('red', 'assets/blockRed5.png');
     game.load.image('tiles', 'assets/Map.jpg');
 
     // Food
@@ -43,6 +44,10 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
     this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
     this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
+
+    this.game.load.onLoadComplete.add(() => {
+      
+    });
   }
 
   async create() {
@@ -55,8 +60,8 @@ class MainGame extends Phaser.State {
 
     this.map = map;
 
-    map.addTilesetImage('Map10', 'tiles');
-    map.addTilesetImage('blockRed10', 'red');
+    map.addTilesetImage('Map5', 'tiles');
+    map.addTilesetImage('blockRed5', 'red');
 
     map.createLayer('base');
 
@@ -160,8 +165,13 @@ class MainGame extends Phaser.State {
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
     var i;  
-    for (i = 0; i < this.players.length; i++)
+    for (i = 0; i < this.players.length; i++) {
       this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
+    }
+    if (!this.isReady) {
+      SocketConnector.setReady();
+      this.isReady = true;
+    }
   }
 
   // Miscellaneous Callback Definition
@@ -217,8 +227,6 @@ class MainGame extends Phaser.State {
       if (roomMessage === 'Duplicate Room Name') {
         await SocketConnector.joinRoom('Test', 'Tester2');
       }
-
-      SocketConnector.setReady();
       res();
     })
   }

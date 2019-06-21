@@ -84,6 +84,7 @@ class Room {
     // Add Set Ready
     socket.on('setReady', (isReady=true, fn) => {
       this.clients.find(c => c.socketId === socket.id).isReady = isReady;
+      console.log('dfaf')
 
       if (!this.isPlaying) {
         this.isPlaying = true;
