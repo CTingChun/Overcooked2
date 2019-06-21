@@ -1,4 +1,10 @@
 // Room Class For Handling All Game Logic Issue And Other Issue.
+// Random String
+const RandStr = require('crypto-random-string');
+
+// Util Function
+var Util = require('./util');
+
 class Room {
   /**
    * @constructor
@@ -13,6 +19,9 @@ class Room {
 
     // Socket In Room
     this.clients = [];
+
+    // Vegetables
+    this.onions = [];
 
     // Room Player Slot
     this.roomPlayerSlot = [false, false, false, false];
@@ -63,6 +72,72 @@ class Room {
     socket.on('getPlayersInfo', (fn) => {
       // Return Info.
       fn(this.clients);
+    });
+
+    // Get Onions Info
+    socket.on('getVegetableInfo', (type, fn) => {
+      // Return Onion Info
+      if (type === 'onion') {
+
+        fn(this.onions);
+
+      } else {
+        
+        Util.logger('Not Supported Vegetable Type.', true);
+
+      }
+    });
+
+    // Add Vegetable
+    socket.on('addVegetable', (type, payload) => {
+      // add Onion Info
+      if (type === 'onion') {
+
+        // Payload Should Have Following Structure
+        // {
+        //   x: (InitX),
+        //   y: (InitY),
+        //   hashString: 'dafed...'
+        // }
+        let { x, y } = payload;
+
+        this.onions.push({
+          x,
+          y,
+          hash: RandStr({ length: 12 })
+        });
+
+        // Update To Client
+        this.room.emit('updateVegetable', 'onion', this.onions);
+
+        Util.logger('Onion Added.')
+
+      } else {
+        
+        Util.logger('Not Supported Vegetable Type.', true);
+
+      }
+    });
+
+    // Remove Vegetable
+    socket.on('removeVegetable', (type, hash) => {
+      // Remove Onion
+      if (type === 'onion') {
+
+        let idx = this.onions.findIndex(o => o.hash === hash);
+
+        if (idx > -1) {
+          this.onions.splice(idx, 1);
+        }
+
+        // Update To Client
+        this.room.emit('updateVegetable', 'onion', this.onions);
+
+      } else {
+        
+        Util.logger('Not Supported Vegetable Type.', true);
+
+      }
     })
 
     // Emit To Room Member
@@ -91,6 +166,8 @@ class Room {
     socket.removeAllListeners('setReady');
     socket.removeAllListeners('updateSprite');
     socket.removeAllListeners('updateSpriteBody');
+    socket.removeAllListeners('getPlayersInfo');
+    socket.removeAllListeners('getOnionsInfo');
 
     // Update Room Info
     this.updateRoomInfo();
