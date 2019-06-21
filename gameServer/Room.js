@@ -16,6 +16,7 @@ class Room {
     this.name = name;
     this.room = io.to(this.name);
     this.isPlaying = false;
+    this.hash = RandStr({ length: 12 });
 
     // Socket In Room
     this.clients = [];
@@ -23,8 +24,18 @@ class Room {
     // Vegetables
     this.onions = [];
 
+    // Menus
+    this.menuSlot = [false, false, false];
+    this.menuTypes = ['onion', 'tomato', 'mashroom'];
+
     // Room Player Slot
     this.roomPlayerSlot = [false, false, false, false];
+
+    // Score
+    this.score = 0;
+    this.ScoreUnit = 20;
+
+    Util.logger(`Room Instance ${this.hash}`);
   }
   // Getter
   get currentClientNumber() {
@@ -52,11 +63,46 @@ class Room {
       playerPosition: String(playerSlot)
     });
 
+    this.emitMenu = () => {
+      if (this.menuSlot.findIndex(s => !s) !== -1) {
+        let randIdx = Math.floor(Math.random()*(3));
+
+        let slotIdx = this.menuSlot.findIndex(s => !s) === -1 ? 0 : this.menuSlot.findIndex(s => !s);
+
+        this.menuSlot[slotIdx] = true;
+
+        let payload = {
+          idx: slotIdx,
+          type: this.menuTypes[randIdx],
+          hash: RandStr({ length: 12 })
+        };
+
+        this.room.emit('updateMenu', payload);
+      }
+    }
+
     // Add Set Ready
     socket.on('setReady', (isReady=true, fn) => {
       this.clients.find(c => c.socketId === socket.id).isReady = isReady;
+      console.log('dfaf')
+
+      if (!this.isPlaying) {
+        this.isPlaying = true;
+
+        setInterval(this.emitMenu, 5000);
+      }
       fn('OK');
     });
+
+    // Delete Menu
+    socket.on('completeMenu', (slotId, hash) => {
+      this.menuSlot[slotId] = false;
+
+      this.score += this.ScoreUnit;
+
+      this.room.emit('deleteMenu', hash);
+      this.room.emit('updateScore', this.score);
+    })
 
     // Update Sprite
     socket.on('updateSprite', (payload, controlMes) => {

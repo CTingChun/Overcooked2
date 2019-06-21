@@ -25,4 +25,4 @@ game.state.add('MainGame', new MainGame());
 game.state.add('EndGameMenu', new EndGameMenu());
 
 // Start Game State, 這邊測試的時候可以自己改掉
-game.state.start('Tutorial');
+game.state.start('Menu');

@@ -2,10 +2,15 @@ class MainGame extends Phaser.State {
   constructor() {
     // Constructor, 基本上不用加東西
     super();
+    this.isReady = false;
 
     // Players Object
     this.players = [];
     this.player = null;
+
+    // Score Related
+    this.score = 0;
+    this.requirements = [];
   }
 
   preload() {
@@ -23,6 +28,11 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
 
+    // Dish Requirement
+    this.game.load.image('MashroomSoupRequirement', './assets/Mashroom-Dish-Requirement.png');
+    this.game.load.image('OnionSoupRequirement', './assets/Onion-Soup-Requirement.png');
+    this.game.load.image('TomatoSoupRequirement', './assets/Tomato-Soup-Requirement.png');
+
     this.onions = game.add.physicsGroup();
     this.onions.enableBody = true;
     this.mushrooms = game.add.physicsGroup();
@@ -34,6 +44,10 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
     this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
     this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
+
+    this.game.load.onLoadComplete.add(() => {
+      
+    });
   }
 
   async create() {
@@ -54,7 +68,7 @@ class MainGame extends Phaser.State {
     var collisionLayer = map.createLayer('collision');
     this.collisionLayer = collisionLayer;
 
-    //collisionLayer.visible = true;
+    collisionLayer.visible = false;
 
     map.setCollisionByExclusion([], true, this.collisionLayer);
     collisionLayer.resizeWorld();
@@ -118,6 +132,12 @@ class MainGame extends Phaser.State {
       }
     }, this);
 
+    // Update Score
+    this.game.socket.on('updateScore', score => {
+      this.score = score;
+      console.log(this.score);
+    });
+
     map.createLayer('foreground');
 
     // Add Key Control Callback
@@ -129,14 +149,29 @@ class MainGame extends Phaser.State {
     this.tomatos.createMultiple(50, 'tomato');
     this.mushrooms.createMultiple(50, 'mushroom');
 
+    // Graphic
+    this.graphics = this.game.add.graphics({ x: 0, y: 0 });
 
+    SocketConnector.syncMenu(this.requirements, (menu) => {
+      console.log(menu);
+      this.createRequirement(menu.type, menu.idx, menu.hash);
+    });
+
+    // this.createRequirement('onion', 0);
+    // this.createRequirement('onion', 1);
+    // this.createRequirement('onion', 2);
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-    var i;  
-    for (i = 0; i < this.players.length; i++)
+
+    for (let i = 0; i < this.players.length; i++) {
       this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
+    }
+    if (!this.isReady) {
+      SocketConnector.setReady();
+      this.isReady = true;
+    }
   }
 
   // Miscellaneous Callback Definition
@@ -148,7 +183,6 @@ class MainGame extends Phaser.State {
     if (key === 'ArrowDown') this.player.moveDown();
     if (key === 'ArrowUp') this.player.moveUp();
     if (key === ' ') console.log();
-
   }
 
   keyUp(event) {
@@ -171,13 +205,17 @@ class MainGame extends Phaser.State {
       target.sprite.animations.play('up');
     } else if (controlMes === 'go Down') {
       target.sprite.animations.play('down');
-    } else if(controlMes === 'stop X'){
-      target.sprite.animations.stop(null,true);
-    } else if(controlMes === 'stop Y'){
-      target.sprite.animations.stop(null,true);
+    } else if (controlMes === 'stop X') {
+      target.sprite.animations.stop(null, true);
+    } else if (controlMes === 'stop Y') {
+      target.sprite.animations.stop(null, true);
     }
   }
 
+  // Add Requirement
+  createRequirement(type, idx, hash) {
+    this.requirements.push(new MenuRequirement(this.game, idx, type, hash));
+  }
 
   // Test Connector
   testConnector() {
