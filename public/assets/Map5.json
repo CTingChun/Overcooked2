@@ -49,8 +49,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":11.5,
-                 "x":466,
+                 "width":44.5,
+                 "x":451,
                  "y":99.5
                 }, 
                 {
@@ -60,8 +60,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":11.5,
-                 "x":385.5,
+                 "width":56.5,
+                 "x":361.5,
                  "y":563.5
                 }, 
                 {
@@ -71,9 +71,53 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":11.5,
-                 "x":584,
+                 "width":52.5,
+                 "x":565,
                  "y":564
+                }, 
+                {
+                 "height":86,
+                 "id":8,
+                 "name":"wash",
+                 "rotation":-90,
+                 "type":"",
+                 "visible":true,
+                 "width":53.5,
+                 "x":1032,
+                 "y":240.5
+                }, 
+                {
+                 "height":61,
+                 "id":9,
+                 "name":"dirty",
+                 "rotation":-90,
+                 "type":"",
+                 "visible":true,
+                 "width":28.5,
+                 "x":179.75,
+                 "y":410.5
+                }, 
+                {
+                 "height":61,
+                 "id":10,
+                 "name":"pot",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":45.5,
+                 "x":781.75,
+                 "y":99.5
+                }, 
+                {
+                 "height":61,
+                 "id":11,
+                 "name":"garbage",
+                 "rotation":-90,
+                 "type":"",
+                 "visible":true,
+                 "width":43.5,
+                 "x":1172.75,
+                 "y":579.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -82,7 +126,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":8,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "renderorder":"left-up",
  "tiledversion":"1.2.4",
