@@ -238,7 +238,7 @@ class MainGame extends Phaser.State {
     });
 
     // Sync Time
-    this.text = this.game.add.text(1085, 620, '2:00', {
+    this.text = this.game.add.text(1085, 620, '3:00', {
       fontSize: 40,
       fill: '#ffffff'
     })
@@ -319,6 +319,7 @@ class MainGame extends Phaser.State {
   }
 
   syncUpCallback(idx, controlMes, target) {
+    console.log(target);
     target.playerLabel.x = target.sprite.body.x + 30;
     target.playerLabel.y = target.sprite.body.y - 20;
     if (!target.isHolding) {
@@ -434,15 +435,20 @@ class MainGame extends Phaser.State {
     else if (target.isHolding) {
       // Check if can add 分數
       if (Phaser.Rectangle.contains(this.sendRect, target.sprite.x, target.sprite.y)) {
-        if (target.isPlate || true) {
+        if (target.isPlate) {
           for (let menu of this.requirements) {
-            if (target.holdingObject === 'onionSoup' && menu.type === 'onion') {
+            if (target.holdingObject === 'onionPlate' && menu.type === 'onion') {
               SocketConnector.deleteMenu(menu);
               menu.delete();
               break;
             }
           }
         }
+      }
+
+      if (Phaser.Rectangle.contains(this.garbageRect, target.sprite.x, target.sprite.y)) {
+        console.log('dfasf')
+        target.clearAllFlag();
       }
 
       if (target.isOnion) {
