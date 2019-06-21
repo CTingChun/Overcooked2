@@ -133,10 +133,7 @@ class MainGame extends Phaser.State {
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-<<<<<<< Updated upstream
     
-=======
->>>>>>> Stashed changes
   }
 
   // Miscellaneous Callback Definition
