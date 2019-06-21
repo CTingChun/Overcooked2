@@ -12,6 +12,8 @@ class Player {
   isPot = false;
   isPlate = false;
 
+  holdingObject = null;
+
   constructor(game, playerAsset, initX, initY, socketId, positionId) {
     this.game = game;
     this.sprite = this.game.add.sprite(initX, initY, playerAsset);
