@@ -2,12 +2,15 @@
 class Player {
 
   // Constant Variable
-  playerVelocity = 100;
+  playerVelocity = 200;
   isHolding = false;
 
   constructor(game, playerAsset, initX, initY, socketId) {
     this.game = game;
     this.sprite = this.game.add.sprite(initX, initY, playerAsset);
+
+    this.sprite.scale.setTo(1.5, 1.5);
+    this.sprite.anchor.setTo(0.5,0.5);
 
     // Connector Used.
     this.socketId = socketId;
@@ -25,7 +28,7 @@ class Player {
     //worldBound
     this.sprite.body.collideWorldBounds = true;
 
-    this.sprite.scale.setTo(1.5,1.5); 
+    
   }
 
   moveLeft() {
@@ -59,20 +62,20 @@ class Player {
     }, 'go Down');
   }
 
-  cleanVelocityX(){
+  cleanVelocityX() {
     SocketConnector.update('spriteBody', {
       'velocity.x': 0
-    } ,'stop X');
+    }, 'stop X');
   }
 
-  cleanVelocityY(){
+  cleanVelocityY() {
     SocketConnector.update('spriteBody', {
       'velocity.y': 0
-    } ,'stop Y');
+    }, 'stop Y');
   }
 
   takeItem(onion) {
-    if(!isHolding){
+    if (!isHolding) {
       this.sprite.addChild(onion);
     }
   }

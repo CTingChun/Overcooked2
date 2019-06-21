@@ -68,7 +68,7 @@ class MainGame extends Phaser.State {
     var collisionLayer = map.createLayer('collision');
     this.collisionLayer = collisionLayer;
 
-    //collisionLayer.visible = true;
+    collisionLayer.visible = false;
 
     map.setCollisionByExclusion([], true, this.collisionLayer);
     collisionLayer.resizeWorld();
@@ -164,8 +164,8 @@ class MainGame extends Phaser.State {
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-    var i;  
-    for (i = 0; i < this.players.length; i++) {
+
+    for (let i = 0; i < this.players.length; i++) {
       this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
     }
     if (!this.isReady) {
@@ -183,7 +183,6 @@ class MainGame extends Phaser.State {
     if (key === 'ArrowDown') this.player.moveDown();
     if (key === 'ArrowUp') this.player.moveUp();
     if (key === ' ') console.log();
-
   }
 
   keyUp(event) {
@@ -206,10 +205,10 @@ class MainGame extends Phaser.State {
       target.sprite.animations.play('up');
     } else if (controlMes === 'go Down') {
       target.sprite.animations.play('down');
-    } else if(controlMes === 'stop X'){
-      target.sprite.animations.stop(null,true);
-    } else if(controlMes === 'stop Y'){
-      target.sprite.animations.stop(null,true);
+    } else if (controlMes === 'stop X') {
+      target.sprite.animations.stop(null, true);
+    } else if (controlMes === 'stop Y') {
+      target.sprite.animations.stop(null, true);
     }
   }
 
