@@ -36,8 +36,9 @@ class MainGame extends Phaser.State {
     this.game.load.image('tomato-icon', './assets/tomato-icon', 32, 32);
     this.game.load.image('mushroom-icon', './assets/mushroom-icon', 32, 32);
 
-    //Pot
-    this.game.load.image('pot', './assets/pot.png', 82, 105);
+    //Pot and Plate
+    this.game.load.spritesheet('pot', './assets/pot.png', 72, 87);
+    this.game.load.spritesheet('plate', './assets/plate.png', 26, 21);
 
     // Dish Requirement
     this.game.load.image('MashroomSoupRequirement', './assets/Mashroom-Dish-Requirement.png');
@@ -88,7 +89,7 @@ class MainGame extends Phaser.State {
     collisionLayer.resizeWorld();
 
     //Add Pot
-    this.potImg = game.add.sprite(763, 33, 'pot');
+    this.potImg = game.add.sprite(765, 33, 'pot');
 
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
@@ -204,11 +205,16 @@ class MainGame extends Phaser.State {
 
     map.createLayer('foreground');
 
+    //Add plate
+    this.plateImg = game.add.sprite(570, 280, 'plate');
+    this.plateImg.scale.setTo(2.5, 2.5);
+    this.game.physics.arcade.enable(this.plateImg);
+
     //Add onion
-    this.onionCut1 = new Food(game, 'onion-1',365, 610, 1.5);
-    this.onionCut1.sprite.visible=false;
-    this.onionCut2 = new Food(game, 'onion-1',567, 610, 1.5);
-    this.onionCut2.sprite.visible=false;
+    this.onionCut1 = new Food(game, 'onion-1', 365, 610, 1.5);
+    this.onionCut1.sprite.visible = false;
+    this.onionCut2 = new Food(game, 'onion-1', 567, 610, 1.5);
+    this.onionCut2.sprite.visible = false;
 
     //Add Timing
     this.timing = game.add.sprite(1050, 600, 'time');
@@ -334,14 +340,14 @@ class MainGame extends Phaser.State {
           if (this.currentCu1ProgressBar != null) {
             this.currentCu1ProgressBar.timer.resume();
           } else {
-            this.currentCu1ProgressBar = new ProgressBar(this.game, 330, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu1ProgressBar = null }, this);
+            this.currentCu1ProgressBar = new ProgressBar(this.game, 330, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu1ProgressBar = null, this.onionCut1.sprite.frame = 1, this.onionCut1.hasProcessed = true }, this);
           }
         }
         if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
           if (this.currentCu2ProgressBar != null) {
             this.currentCu2ProgressBar.timer.resume();
           } else {
-            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null,this.onionCut2.sprite.frame = 1; }, this);
+            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null, this.onionCut2.sprite.frame = 1, this.onionCut2.hasProcessed = true }, this);
           }
         }
         if (Phaser.Rectangle.contains(this.washRect, target.sprite.x, target.sprite.y)) {
@@ -361,35 +367,66 @@ class MainGame extends Phaser.State {
             this.currentPotProgressBar = new ProgressBar(this.game, 755, 150, 100, 15, 50, 100, () => { this.currentPotProgressBar = null }, this);
           }
         }*/
-        if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
-          target.isHolding = true;
-          this.potImg.visible = false;
-          target.isPot = true;
+        if (this.game.physics.arcade.overlap(this.plateImg, target.sprite)) {
+          if (this.plateImg.frame = 0) {
+            target.isHolding = true;
+            this.plateImg.destroy();
+            target.isPlate = true;
+            target.holdingObject = "Plate";
+          }
+          else if (this.plateImg.frame = 1){
+            target.isHolding = true;
+            this.plateImg.destroy();
+            target.isPlate = true;
+            target.holdingObject = "onionPlate";
+          }
         }
-        if (Phaser.Rectangle.contains(this.mushroomRect, target.sprite.x, target.sprite.y)) {
+        else if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+          if (this.potImg.frame != 3) {
+            target.isHolding = true;
+            this.potImg.visible = false;
+            target.isPot = true;
+            target.holdingObject = "Pot";
+          }
+          else {
+            target.isHolding = true;
+            this.potImg.visible = false;
+            target.isPot = true;
+            target.holdingObject = "cookedPot";
+          }
+        }
+        else if (Phaser.Rectangle.contains(this.mushroomRect, target.sprite.x, target.sprite.y)) {
           target.isHolding = true;
           target.isMushroom = true;
+          target.holdingObject = "Mushroom";
         }
-        if (Phaser.Rectangle.contains(this.tomatoRect, target.sprite.x, target.sprite.y)) {
+        else if (Phaser.Rectangle.contains(this.tomatoRect, target.sprite.x, target.sprite.y)) {
           target.isHolding = true;
           target.isTomato = true;
+          target.holdingObject = "Toamto";
         }
-        if (Phaser.Rectangle.contains(this.onionRect, target.sprite.x, target.sprite.y)) {
+        else if (Phaser.Rectangle.contains(this.onionRect, target.sprite.x, target.sprite.y)) {
           target.isHolding = true;
           target.isOnion = true;
+          target.holdingObject = "Onion";
         }
-        if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+        else if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
           if (this.onionCut1.sprite.visible) {
             target.isHolding = true;
             target.isOnion = true;
+            target.holdingObject = "cuttingOnion";
             this.onionCut1.sprite.visible = false;
+            this.onionCut1.sprite.frame = 0;
+
           }
         }
-        if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+        else if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
           if (this.onionCut2.sprite.visible) {
             target.isHolding = true;
             target.isOnion = true;
+            target.holdingObject = "cuttingOnion";
             this.onionCut2.sprite.visible = false;
+            this.onionCut2.sprite.frame = 0;
           }
         }
       }
@@ -422,16 +459,39 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
-          if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
-            this.onionCut1.sprite.frame = 0;
-            this.onionCut1.sprite.visible = true;
-            target.isOnion = false;
+          if (target.holdingObject != "cuttingOnion") {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              target.holdingObject = null;
+              this.onionCut1.sprite.frame = 0;
+              this.onionCut1.sprite.visible = true;
+              target.isOnion = false;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              target.holdingObject = null;
+              this.onionCut2.sprite.frame = 0;
+              this.onionCut2.sprite.visible = true;
+              target.isOnion = false;
+            }
           }
-          if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
-            this.onionCut2.sprite.visible = true;
-            target.isOnion = false;
+          else {
+            if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              target.isOnion = false;
+              target.holdingObject = null;
+              if (this.potImg.frame < 2) {
+                this.potImg.frame += 1;
+              }
+              else {
+                this.potImg.frame = 3;
+                if (this.currentPotProgressBar != null) {
+                  this.currentPotProgressBar.timer.resume();
+                } else {
+                  this.currentPotProgressBar = new ProgressBar(this.game, 755, 150, 100, 15, 50, 100, () => { this.currentPotProgressBar = null }, this);
+                }
+              }
+            }
           }
           if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
 
@@ -474,13 +534,16 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
+
           if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
             target.isHolding = !target.isHolding;
           }
           if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
             target.isHolding = !target.isHolding;
           }
+
         }
+
       }
       else if (target.isPot) {
         if (controlMes === 'go Left') {
@@ -496,11 +559,19 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
-
           if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+            target.holdingObject = null;
             target.isHolding = false;
             this.potImg.visible = true;
             target.isPot = false;
+          }
+          if (this.game.physics.arcade.overlap(this.plateImg, target.sprite)) {
+            if (target.holdingObject == "cookedPot") {
+              target.holdingObject = "Pot";
+              this.potImg.frame = 0;
+              this.plateImg.frame = 1;
+
+            }
           }
 
         }
@@ -518,6 +589,12 @@ class MainGame extends Phaser.State {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
+        } else if (controlMes === 'press Space') {
+          this.plateImg = game.add.sprite(target.sprite.x, target.sprite.y, 'plate');
+
+          this.plateImg.scale.setTo(2.5, 2.5);
+          this.game.physics.arcade.enable(this.plateImg);
+          target.isHolding = false;
         }
       }
     }
