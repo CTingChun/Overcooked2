@@ -12,13 +12,13 @@ class MainGame extends Phaser.State {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map5.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('red', 'assets/blockRed10.png');
+    game.load.image('red', 'assets/blockRed5.png');
     game.load.image('tiles', 'assets/Map.jpg');
-    
+
     // Food
-    this.game.load.spritesheet('onion-1', './assets/onion-1.png',32, 32);
+    this.game.load.spritesheet('onion-1', './assets/onion-1.png', 32, 32);
     this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
@@ -46,20 +46,20 @@ class MainGame extends Phaser.State {
 
     this.map = map;
 
-    map.addTilesetImage('Map10', 'tiles');
-    map.addTilesetImage('blockRed10', 'red');
+    map.addTilesetImage('Map5', 'tiles');
+    map.addTilesetImage('blockRed5', 'red');
 
     map.createLayer('base');
 
     var collisionLayer = map.createLayer('collision');
     this.collisionLayer = collisionLayer;
 
-    collisionLayer.visible = false;
+    //collisionLayer.visible = true;
 
     map.setCollisionByExclusion([], true, this.collisionLayer);
     collisionLayer.resizeWorld();
 
-    
+
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
@@ -114,6 +114,7 @@ class MainGame extends Phaser.State {
         let position = PlayerPosition[targetMember.playerPosition];
         this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
+        map.createLayer('foreground');
       }
     }, this);
 
@@ -133,39 +134,51 @@ class MainGame extends Phaser.State {
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-    
+    var i;  
+    for (i = 0; i < this.players.length; i++)
+      this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
-    if(key === 'ArrowLeft') this.player.moveLeft();
-    if(key === 'ArrowRight') this.player.moveRight();
-    if(key === 'ArrowDown') this.player.moveDown();
-    if(key === 'ArrowUp') this.player.moveUp();
-    if(key === ' ') console.log();
+    if (key === 'ArrowLeft') this.player.moveLeft();
+    if (key === 'ArrowRight') this.player.moveRight();
+    if (key === 'ArrowDown') this.player.moveDown();
+    if (key === 'ArrowUp') this.player.moveUp();
+    if (key === ' ') console.log();
+
   }
 
-  keyUp() {
-
+  keyUp(event) {
+    let { key } = event;
+    if (key === 'ArrowLeft') this.player.cleanVelocityX();
+    if (key === 'ArrowRight') this.player.cleanVelocityX();
+    if (key === 'ArrowDown') this.player.cleanVelocityY();
+    if (key === 'ArrowUp') this.player.cleanVelocityY();
+    if (key === ' ') console.log();
   }
 
   syncUpCallback(idx, controlMes, target) {
     console.log(target);
     console.log(controlMes);
-    if(controlMes === 'go Left'){
+    if (controlMes === 'go Left') {
       target.sprite.animations.play('left');
-    } else if (controlMes === 'go Right'){
+    } else if (controlMes === 'go Right') {
       target.sprite.animations.play('right');
     } else if (controlMes === 'go Up') {
       target.sprite.animations.play('up');
     } else if (controlMes === 'go Down') {
       target.sprite.animations.play('down');
+    } else if(controlMes === 'stop X'){
+      target.sprite.animations.stop(null,true);
+    } else if(controlMes === 'stop Y'){
+      target.sprite.animations.stop(null,true);
     }
   }
 
-  
+
   // Test Connector
   testConnector() {
     return new Promise(async (res, rej) => {

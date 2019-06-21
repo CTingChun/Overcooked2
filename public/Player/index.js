@@ -13,7 +13,7 @@ class Player {
     this.socketId = socketId;
 
     // Enable Sprite
-    this.game.physics.enable(this.sprite);
+    this.game.physics.arcade.enable(this.sprite);
 
     // Move Animation
     this.sprite.frame = 8;
@@ -21,7 +21,11 @@ class Player {
     this.sprite.animations.add('left', [4, 5, 6, 7], 8, true);
     this.sprite.animations.add('up', [0, 1, 2, 3], 8, true);
     this.sprite.animations.add('down', [8, 9, 10, 11], 8, true);
-    this.sprite.physicsBodyType = Phaser.Physics.ARCADE;
+
+    //worldBound
+    this.sprite.body.collideWorldBounds = true;
+
+    this.sprite.scale.setTo(1.5,1.5); 
   }
 
   moveLeft() {
@@ -53,6 +57,18 @@ class Player {
     SocketConnector.update('spriteBody', {
       'velocity.y': this.playerVelocity
     }, 'go Down');
+  }
+
+  cleanVelocityX(){
+    SocketConnector.update('spriteBody', {
+      'velocity.x': 0
+    } ,'stop X');
+  }
+
+  cleanVelocityY(){
+    SocketConnector.update('spriteBody', {
+      'velocity.y': 0
+    } ,'stop Y');
   }
 
   takeItem(onion) {
