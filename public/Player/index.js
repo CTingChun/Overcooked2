@@ -14,11 +14,17 @@ class Player {
 
     // Enable Sprite
     this.game.physics.enable(this.sprite);
+
+    // Move Animation
+    this.sprite.frame = 8;
+    this.sprite.animations.add('right', [12, 13, 14, 15], 8, true);
+    this.sprite.animations.add('left', [4, 5, 6, 7], 8, true);
+    this.sprite.animations.add('up', [0, 1, 2, 3], 8, true);
+    this.sprite.animations.add('down', [8, 9, 10, 11], 8, true);
   }
 
   moveLeft() {
     // this.player.body.velocity.x = - this.playerVelocity;
-
     SocketConnector.update('spriteBody', {
       'velocity.x': -this.playerVelocity
     }, 'go Left');
@@ -48,10 +54,9 @@ class Player {
     }, 'go Down');
   }
 
-  takeItem() {
+  takeItem(onion) {
     if(!isHolding){
-      isHolding = !isHolding;
-      
+      this.sprite.addChild(onion);
     }
   }
 
@@ -61,4 +66,5 @@ class Player {
     // Delete Sprite
     this.sprite.destroy();
   }
+
 }
