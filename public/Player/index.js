@@ -5,12 +5,14 @@ class Player {
   playerVelocity = 200;
   isHolding = false;
 
-  constructor(game, playerAsset, initX, initY, socketId) {
+  constructor(game, playerAsset, initX, initY, socketId, positionId) {
     this.game = game;
     this.sprite = this.game.add.sprite(initX, initY, playerAsset);
 
-    this.sprite.scale.setTo(1.5, 1.5);
+    this.sprite.scale.setTo(2, 2);
     this.sprite.anchor.setTo(0.5,0.5);
+
+    this.positionId = positionId;
 
     // Connector Used.
     this.socketId = socketId;
