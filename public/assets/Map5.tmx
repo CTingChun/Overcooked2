@@ -457,7 +457,7 @@
   <object id="8" name="wash" x="1032" y="240.5" width="53.5" height="86" rotation="-90"/>
   <object id="9" name="dirty" x="188.75" y="394.5" width="56.5" height="61" rotation="-90"/>
   <object id="10" name="pot" x="781.75" y="99.5" width="45.5" height="61"/>
-  <object id="11" name="garbage" x="1172.75" y="579.5" width="43.5" height="61" rotation="-90"/>
+  <object id="11" name="garbage" x="1151.75" y="579.5" width="76.5" height="82" rotation="-90"/>
   <object id="12" name="send" x="162.75" y="426.5" width="76.5" height="94"/>
   <object id="13" name="tomato" x="519.75" y="100.5" width="44.5" height="61"/>
   <object id="14" name="mushroom" x="383.75" y="100.5" width="44.5" height="61"/>
