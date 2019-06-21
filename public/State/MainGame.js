@@ -2,26 +2,36 @@ class MainGame extends Phaser.State {
   constructor() {
     // Constructor, 基本上不用加東西
     super();
+    this.isReady = false;
 
     // Players Object
     this.players = [];
     this.player = null;
+
+    // Score Related
+    this.score = 0;
+    this.requirements = [];
   }
 
   preload() {
     // Preload Hook, 載入資料
 
     // Map
-    game.load.tilemap('map', 'assets/Map10.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', 'assets/Map5.json', null, Phaser.Tilemap.TILED_JSON);
 
-    game.load.image('red', 'assets/blockRed10.png');
+    game.load.image('red', 'assets/blockRed5.png');
     game.load.image('tiles', 'assets/Map.jpg');
-    
+
     // Food
-    this.game.load.spritesheet('onion-1', './assets/onion-1.png',32, 32);
+    this.game.load.spritesheet('onion-1', './assets/onion-1.png', 32, 32);
     this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+
+    // Dish Requirement
+    this.game.load.image('MashroomSoupRequirement', './assets/Mashroom-Dish-Requirement.png');
+    this.game.load.image('OnionSoupRequirement', './assets/Onion-Soup-Requirement.png');
+    this.game.load.image('TomatoSoupRequirement', './assets/Tomato-Soup-Requirement.png');
 
     this.onions = game.add.physicsGroup();
     this.onions.enableBody = true;
@@ -34,6 +44,10 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('player2', './assets/player2.png', 64, 64);
     this.game.load.spritesheet('player3', './assets/player3.png', 64, 64);
     this.game.load.spritesheet('player4', './assets/player4.png', 64, 64);
+
+    this.game.load.onLoadComplete.add(() => {
+      
+    });
   }
 
   async create() {
@@ -46,8 +60,8 @@ class MainGame extends Phaser.State {
 
     this.map = map;
 
-    map.addTilesetImage('Map10', 'tiles');
-    map.addTilesetImage('blockRed10', 'red');
+    map.addTilesetImage('Map5', 'tiles');
+    map.addTilesetImage('blockRed5', 'red');
 
     map.createLayer('base');
 
@@ -59,7 +73,7 @@ class MainGame extends Phaser.State {
     map.setCollisionByExclusion([], true, this.collisionLayer);
     collisionLayer.resizeWorld();
 
-    
+
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
 
@@ -114,8 +128,15 @@ class MainGame extends Phaser.State {
         let position = PlayerPosition[targetMember.playerPosition];
         this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId));
         console.log(`Add Player ${targetMember.socketId}.`);
+        map.createLayer('foreground');
       }
     }, this);
+
+    // Update Score
+    this.game.socket.on('updateScore', score => {
+      this.score = score;
+      console.log(this.score);
+    });
 
     map.createLayer('foreground');
 
@@ -128,44 +149,74 @@ class MainGame extends Phaser.State {
     this.tomatos.createMultiple(50, 'tomato');
     this.mushrooms.createMultiple(50, 'mushroom');
 
+    // Graphic
+    this.graphics = this.game.add.graphics({ x: 0, y: 0 });
 
+    SocketConnector.syncMenu(this.requirements, (menu) => {
+      console.log(menu);
+      this.createRequirement(menu.type, menu.idx, menu.hash);
+    });
+
+    // this.createRequirement('onion', 0);
+    // this.createRequirement('onion', 1);
+    // this.createRequirement('onion', 2);
   }
 
   update() {
     // Update Hook, 整個 State 的邏輯，能乾淨就乾淨
-    
+
+    for (let i = 0; i < this.players.length; i++) {
+      this.game.physics.arcade.collide(this.players[i].sprite, this.collisionLayer);
+    }
+    if (!this.isReady) {
+      SocketConnector.setReady();
+      this.isReady = true;
+    }
   }
 
   // Miscellaneous Callback Definition
   // method 定義方法很簡單
   keyDone(event) {
     let { key } = event;
-    if(key === 'ArrowLeft') this.player.moveLeft();
-    if(key === 'ArrowRight') this.player.moveRight();
-    if(key === 'ArrowDown') this.player.moveDown();
-    if(key === 'ArrowUp') this.player.moveUp();
-    if(key === ' ') console.log();
+    if (key === 'ArrowLeft') this.player.moveLeft();
+    if (key === 'ArrowRight') this.player.moveRight();
+    if (key === 'ArrowDown') this.player.moveDown();
+    if (key === 'ArrowUp') this.player.moveUp();
+    if (key === ' ') console.log();
   }
 
-  keyUp() {
-
+  keyUp(event) {
+    let { key } = event;
+    if (key === 'ArrowLeft') this.player.cleanVelocityX();
+    if (key === 'ArrowRight') this.player.cleanVelocityX();
+    if (key === 'ArrowDown') this.player.cleanVelocityY();
+    if (key === 'ArrowUp') this.player.cleanVelocityY();
+    if (key === ' ') console.log();
   }
 
   syncUpCallback(idx, controlMes, target) {
     console.log(target);
     console.log(controlMes);
-    if(controlMes === 'go Left'){
+    if (controlMes === 'go Left') {
       target.sprite.animations.play('left');
-    } else if (controlMes === 'go Right'){
+    } else if (controlMes === 'go Right') {
       target.sprite.animations.play('right');
     } else if (controlMes === 'go Up') {
       target.sprite.animations.play('up');
     } else if (controlMes === 'go Down') {
       target.sprite.animations.play('down');
+    } else if (controlMes === 'stop X') {
+      target.sprite.animations.stop(null, true);
+    } else if (controlMes === 'stop Y') {
+      target.sprite.animations.stop(null, true);
     }
   }
 
-  
+  // Add Requirement
+  createRequirement(type, idx, hash) {
+    this.requirements.push(new MenuRequirement(this.game, idx, type, hash));
+  }
+
   // Test Connector
   testConnector() {
     return new Promise(async (res, rej) => {

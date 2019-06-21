@@ -151,6 +151,9 @@ class Hall {
     if (remainClientNumber === 0) {
       Util.logger(`Room ${room.name} deleted.`);
 
+      // Clear Interval
+      clearInterval(room.emitMenu);
+
       this.rooms.splice(roomIdx, 1);
       this.updateHall();
     }
