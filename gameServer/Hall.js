@@ -152,7 +152,8 @@ class Hall {
       Util.logger(`Room ${room.name} deleted.`);
 
       // Clear Interval
-      clearInterval(room.emitMenu);
+      clearInterval(room.emitI);
+      clearInterval(room.countI);
 
       this.rooms.splice(roomIdx, 1);
       this.updateHall();
