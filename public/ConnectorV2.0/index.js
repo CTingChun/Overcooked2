@@ -22,14 +22,14 @@ class SocketConnector {
     });
   }
 
-  static update(type, payload, controlMes='') {
+  static update(type, payload, controlMes='', socketId=null) {
     if (type === 'sprite') {
 
-      game.socket.emit('updateSprite', payload, controlMes);
+      game.socket.emit('updateSprite', payload, controlMes, socketId);
 
     } else if (type === 'spriteBody') {
 
-      game.socket.emit('updateSpriteBody', payload, controlMes);
+      game.socket.emit('updateSpriteBody', payload, controlMes, socketId);
 
     } else {
 

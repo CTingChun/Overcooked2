@@ -20,7 +20,11 @@ class Player {
     this.sprite.anchor.setTo(0.5,0.5);
 
     this.positionId = positionId;
-
+    console.log(initX, initY);
+    this.playerLabel = game.add.text(initX -6, initY - 70, `P${this.positionId}`, {
+      font: '18px Arial',
+      fill: '#ffffff'
+    });
     // Connector Used.
     this.socketId = socketId;
 
