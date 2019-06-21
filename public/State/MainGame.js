@@ -201,7 +201,14 @@ class MainGame extends Phaser.State {
       this.createRequirement(menu.type, menu.idx, menu.hash);
     });
 
-    
+    // Sync Time
+    this.text = this.game.add.text(1085, 620, '2:00', {
+      fontSize: 40,
+      fill: '#ffffff'
+    })
+    SocketConnector.syncTimeout((timeCount) => {
+      this.text.text = `${Math.floor(timeCount / 60)}: ${timeCount % 60}`;
+    }, this)
 
     // this.createRequirement('onion', 0);
     // this.createRequirement('onion', 1);
@@ -217,9 +224,6 @@ class MainGame extends Phaser.State {
       for (let j = 0; j < this.players.length; j++) {
         if (i != j) {
           this.game.physics.arcade.collide(this.players[i].sprite, this.players[j].sprite);
-        }
-        else {
-
         }
       }
 

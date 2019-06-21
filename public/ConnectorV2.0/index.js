@@ -143,6 +143,12 @@ class SocketConnector {
     })
   }
 
+  static syncTimeout(callback, context) {
+    game.socket.on('updateTimeCount', (timeCount) => {
+      callback.call(context, timeCount);
+    })
+  }
+
   static deleteMenu(menu) {
     game.socket.emit('completeMenu', menu.idx, menu.hash);
   }
