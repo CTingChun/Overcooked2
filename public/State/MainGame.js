@@ -32,6 +32,9 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('meat', './assets/meat.png', 32, 32);
     this.game.load.spritesheet('mushroom', './assets/mushroom.png', 32, 32);
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
+    this.game.load.image('onion-icon', './assets/onion-icon', 32, 32);
+    this.game.load.image('tomato-icon', './assets/tomato-icon', 32, 32);
+    this.game.load.image('mushroom-icon', './assets/mushroom-icon', 32, 32);
 
     //Pot and Plate
     this.game.load.spritesheet('pot', './assets/pot.png', 72, 87);
@@ -95,18 +98,17 @@ class MainGame extends Phaser.State {
     this.players = playerInfos.map(p => {
       let position = PlayerPosition[p.playerPosition];
       let newPlayer;
-      console.log(p.playerPosition);
       if (p.playerPosition == 0) {
         newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 1) {
-        newPlayer = new Player(this.game, 'player2', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 2) {
-        newPlayer = new Player(this.game, 'player3', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
       if (p.playerPosition == 3) {
-        newPlayer = new Player(this.game, 'player4', position.x, position.y, p.socketId, p.playerPosition);
+        newPlayer = new Player(this.game, 'player1', position.x, position.y, p.socketId, p.playerPosition);
       }
 
       // Set Player
@@ -154,20 +156,19 @@ class MainGame extends Phaser.State {
 
         // Add Player (DOC)
         let position = PlayerPosition[targetMember.playerPosition];
-        console.log(targetMember.playerPosition);
 
         //Set player with diff sprite
         if (targetMember.playerPosition == 0) {
           this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 1) {
-          this.players.push(new Player(this.game, 'player2', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 2) {
-          this.players.push(new Player(this.game, 'player3', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         if (targetMember.playerPosition == 3) {
-          this.players.push(new Player(this.game, 'player4', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
+          this.players.push(new Player(this.game, 'player1', position.x, position.y, targetMember.socketId, targetMember.playerPosition));
         }
         console.log(`Add Player ${targetMember.socketId}.`);
         map.createLayer('foreground');
@@ -184,6 +185,7 @@ class MainGame extends Phaser.State {
     let wash = this.map.objects.meta.find(o => o.name == 'wash');
     let garbage = this.map.objects.meta.find(o => o.name == 'garbage');
     let dirty = this.map.objects.meta.find(o => o.name == 'dirty');
+    let send = this.map.objects.meta.find(o => o.name == 'send');
 
     this.cut1Rect = new Phaser.Rectangle(cut1.x, cut1.y, cut1.width, cut1.height);
     this.cut2Rect = new Phaser.Rectangle(cut2.x, cut2.y, cut2.width, cut2.height);
@@ -194,11 +196,11 @@ class MainGame extends Phaser.State {
     this.washRect = new Phaser.Rectangle(wash.x, wash.y, wash.width, wash.height);
     this.garbageRect = new Phaser.Rectangle(garbage.x, garbage.y, garbage.width, garbage.height);
     this.dirtyRect = new Phaser.Rectangle(dirty.x, dirty.y, dirty.width, dirty.height);
+    this.sendRect = new Phaser.Rectangle(send.x, send.y, send.width, send.height);
 
     // Update Score
     this.game.socket.on('updateScore', score => {
       this.score = score;
-      console.log(this.score);
     });
 
     map.createLayer('foreground');
@@ -242,6 +244,10 @@ class MainGame extends Phaser.State {
     })
     SocketConnector.syncTimeout((timeCount) => {
       this.text.text = `${Math.floor(timeCount / 60)}: ${timeCount % 60}`;
+
+      if (timeCount === 0) {
+        this.game.state.start('EndGameMenu');
+      }
     }, this)
 
     // this.createRequirement('onion', 0);
@@ -313,7 +319,8 @@ class MainGame extends Phaser.State {
   }
 
   syncUpCallback(idx, controlMes, target) {
-    console.log(target);
+    target.playerLabel.x = target.sprite.body.x + 30;
+    target.playerLabel.y = target.sprite.body.y - 20;
     if (!target.isHolding) {
       if (controlMes === 'go Left') {
         target.sprite.animations.play('left');
@@ -425,6 +432,19 @@ class MainGame extends Phaser.State {
       }
     }
     else if (target.isHolding) {
+      // Check if can add 分數
+      if (Phaser.Rectangle.contains(this.sendRect, target.sprite.x, target.sprite.y)) {
+        if (target.isPlate || true) {
+          for (let menu of this.requirements) {
+            if (target.holdingObject === 'onionSoup' && menu.type === 'onion') {
+              SocketConnector.deleteMenu(menu);
+              menu.delete();
+              break;
+            }
+          }
+        }
+      }
+
       if (target.isOnion) {
         if (controlMes === 'go Left') {
           target.sprite.animations.play('onion_left');
@@ -473,7 +493,9 @@ class MainGame extends Phaser.State {
               }
             }
           }
+          if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
 
+          }
         }
       }
       else if (target.isTomato) {
