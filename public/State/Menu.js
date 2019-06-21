@@ -33,6 +33,8 @@ class Menu extends Phaser.State {
     this.taco = game.add.image(850, 400, 'taco');
     this.menumusic = game.add.audio('menusound');
     this.menumusic.play();
+
+    new ProgressBar(game, 100, 100, 200, 10);
   }
 
   onclick1() {
