@@ -34,7 +34,7 @@ class MainGame extends Phaser.State {
     this.game.load.spritesheet('tomato', './assets/tomato.png', 32, 32);
 
     //Pot
-    this.game.load.image('pot','./assets/pot.png',82,105);
+    this.game.load.image('pot', './assets/pot.png', 82, 105);
 
     // Dish Requirement
     this.game.load.image('MashroomSoupRequirement', './assets/Mashroom-Dish-Requirement.png');
@@ -85,7 +85,7 @@ class MainGame extends Phaser.State {
     collisionLayer.resizeWorld();
 
     //Add Pot
-    this.pot = game.add.sprite(763,33,'pot');
+    this.potImg = game.add.sprite(763, 33, 'pot');
 
     // Get Player Info
     let playerInfos = await SocketConnector.getPlayersInfo();
@@ -174,14 +174,19 @@ class MainGame extends Phaser.State {
     // Get Tilemap Info
     let cut1 = this.map.objects.meta.find(o => o.name == 'cut1');
     let cut2 = this.map.objects.meta.find(o => o.name == 'cut2');
-    let food = this.map.objects.meta.find(o => o.name == 'food');
+    let mushroom = this.map.objects.meta.find(o => o.name == 'mushroom');
+    let tomato = this.map.objects.meta.find(o => o.name == 'tomato');
+    let onion = this.map.objects.meta.find(o => o.name == 'onion');
     let pot = this.map.objects.meta.find(o => o.name == 'pot');
     let wash = this.map.objects.meta.find(o => o.name == 'wash');
     let garbage = this.map.objects.meta.find(o => o.name == 'garbage');
     let dirty = this.map.objects.meta.find(o => o.name == 'dirty');
+
     this.cut1Rect = new Phaser.Rectangle(cut1.x, cut1.y, cut1.width, cut1.height);
     this.cut2Rect = new Phaser.Rectangle(cut2.x, cut2.y, cut2.width, cut2.height);
-    this.foodRect = new Phaser.Rectangle(food.x, food.y, food.width, food.height);
+    this.mushroomRect = new Phaser.Rectangle(mushroom.x, mushroom.y, mushroom.width, mushroom.height);
+    this.tomatoRect = new Phaser.Rectangle(tomato.x, tomato.y, tomato.width, tomato.height);
+    this.onionRect = new Phaser.Rectangle(onion.x, onion.y, onion.width, onion.height);
     this.potRect = new Phaser.Rectangle(pot.x, pot.y, pot.width, pot.height);
     this.washRect = new Phaser.Rectangle(wash.x, wash.y, wash.width, wash.height);
     this.garbageRect = new Phaser.Rectangle(garbage.x, garbage.y, garbage.width, garbage.height);
@@ -193,6 +198,12 @@ class MainGame extends Phaser.State {
     });
 
     map.createLayer('foreground');
+
+    //Add onion
+    this.onionCut1 = new Food(game, 'onion-1',365, 610, 1.5);
+    this.onionCut1.sprite.visible=false;
+    this.onionCut2 = new Food(game, 'onion-1',567, 610, 1.5);
+    this.onionCut2.sprite.visible=false;
 
     //Add Timing
     this.timing = game.add.sprite(1050, 600, 'time');
@@ -319,7 +330,7 @@ class MainGame extends Phaser.State {
           if (this.currentCu2ProgressBar != null) {
             this.currentCu2ProgressBar.timer.resume();
           } else {
-            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null }, this);
+            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null,this.onionCut2.sprite.frame = 1; }, this);
           }
         }
         if (Phaser.Rectangle.contains(this.washRect, target.sprite.x, target.sprite.y)) {
@@ -341,13 +352,35 @@ class MainGame extends Phaser.State {
         }*/
         if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
           target.isHolding = true;
-          this.pot.visible = false;
+          this.potImg.visible = false;
           target.isPot = true;
         }
-        if (Phaser.Rectangle.contains(this.foodRect, target.sprite.x, target.sprite.y)) {
+        if (Phaser.Rectangle.contains(this.mushroomRect, target.sprite.x, target.sprite.y)) {
           target.isHolding = true;
+          target.isMushroom = true;
         }
-
+        if (Phaser.Rectangle.contains(this.tomatoRect, target.sprite.x, target.sprite.y)) {
+          target.isHolding = true;
+          target.isTomato = true;
+        }
+        if (Phaser.Rectangle.contains(this.onionRect, target.sprite.x, target.sprite.y)) {
+          target.isHolding = true;
+          target.isOnion = true;
+        }
+        if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+          if (this.onionCut1.sprite.visible) {
+            target.isHolding = true;
+            target.isOnion = true;
+            this.onionCut1.sprite.visible = false;
+          }
+        }
+        if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+          if (this.onionCut2.sprite.visible) {
+            target.isHolding = true;
+            target.isOnion = true;
+            this.onionCut2.sprite.visible = false;
+          }
+        }
       }
     }
     else if (target.isHolding) {
@@ -367,9 +400,14 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'press Space') {
           if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
             target.isHolding = !target.isHolding;
+            this.onionCut1.sprite.frame = 0;
+            this.onionCut1.sprite.visible = true;
+            target.isOnion = false;
           }
           if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
             target.isHolding = !target.isHolding;
+            this.onionCut2.sprite.visible = true;
+            target.isOnion = false;
           }
 
         }
@@ -409,8 +447,7 @@ class MainGame extends Phaser.State {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
-        } else if (controlMes === 'press Space')
-         {
+        } else if (controlMes === 'press Space') {
           if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
             target.isHolding = !target.isHolding;
           }
@@ -433,13 +470,13 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
-          
+
           if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
             target.isHolding = false;
-            this.pot.visible = true;
+            this.potImg.visible = true;
             target.isPot = false;
           }
-  
+
         }
       }
       else if (target.isPlate) {
