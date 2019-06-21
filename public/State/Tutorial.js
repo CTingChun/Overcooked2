@@ -5,11 +5,15 @@ class Tutorial extends Phaser.State {
   }
 
   preload() {
-    // Preload Hook, 載入資料
+    // Preload Hook, 載入資料      
+    this.game.load.image('bg', '../assets/group.png');
+
   }
 
   create() {
     // Create Hook, 對這個 State 做 Init
+    this.bg = game.add.image(0, 0, 'bg');
+
   }
 
   update() {
