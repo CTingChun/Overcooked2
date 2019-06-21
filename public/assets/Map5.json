@@ -45,7 +45,7 @@
                 {
                  "height":61,
                  "id":1,
-                 "name":"food",
+                 "name":"onion",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -93,9 +93,9 @@
                  "rotation":-90,
                  "type":"",
                  "visible":true,
-                 "width":28.5,
-                 "x":179.75,
-                 "y":410.5
+                 "width":56.5,
+                 "x":188.75,
+                 "y":394.5
                 }, 
                 {
                  "height":61,
@@ -118,6 +118,39 @@
                  "width":43.5,
                  "x":1172.75,
                  "y":579.5
+                }, 
+                {
+                 "height":94,
+                 "id":12,
+                 "name":"send",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":76.5,
+                 "x":162.75,
+                 "y":426.5
+                }, 
+                {
+                 "height":61,
+                 "id":13,
+                 "name":"tomato",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":44.5,
+                 "x":519.75,
+                 "y":100.5
+                }, 
+                {
+                 "height":61,
+                 "id":14,
+                 "name":"mushroom",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":44.5,
+                 "x":383.75,
+                 "y":100.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -126,7 +159,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":12,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"left-up",
  "tiledversion":"1.2.4",
