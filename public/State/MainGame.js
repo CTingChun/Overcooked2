@@ -210,11 +210,20 @@ class MainGame extends Phaser.State {
     this.plateImg.scale.setTo(2.5, 2.5);
     this.game.physics.arcade.enable(this.plateImg);
 
-    //Add onion
+    //Add food
     this.onionCut1 = new Food(game, 'onion-1', 365, 610, 1.5);
     this.onionCut1.sprite.visible = false;
     this.onionCut2 = new Food(game, 'onion-1', 567, 610, 1.5);
     this.onionCut2.sprite.visible = false;
+    this.mushroomCut1 = new Food(game, 'mushroom', 365, 610, 1.5);
+    this.mushroomCut1.sprite.visible = false;
+    this.mushroomCut2 = new Food(game, 'mushroom', 567, 610, 1.5);
+    this.mushroomCut2.sprite.visible = false;
+    this.tomatoCut1 = new Food(game, 'tomato', 365, 610, 1.5);
+    this.tomatoCut1.sprite.visible = false;
+    this.tomatoCut2 = new Food(game, 'tomato', 567, 610, 1.5);
+    this.tomatoCut2.sprite.visible = false;
+
 
     //Add Timing
     this.timing = game.add.sprite(1050, 600, 'time');
@@ -341,14 +350,36 @@ class MainGame extends Phaser.State {
           if (this.currentCu1ProgressBar != null) {
             this.currentCu1ProgressBar.timer.resume();
           } else {
-            this.currentCu1ProgressBar = new ProgressBar(this.game, 330, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu1ProgressBar = null, this.onionCut1.sprite.frame = 1, this.onionCut1.hasProcessed = true }, this);
+            this.currentCu1ProgressBar = new ProgressBar(this.game, 330, WindowHeight - 60, 100, 15, 50, 100, () => {
+              this.currentCu1ProgressBar = null;
+              if (this.onionCut1.sprite.visible) {
+                this.onionCut1.sprite.frame = 1;
+              }
+              else if (this.tomatoCut1.sprite.visible) {
+                this.tomatoCut1.sprite.frame = 1;
+              }
+              else if (this.mushroomCut1.sprite.visible) {
+                this.mushroomCut1.sprite.frame = 1;
+              }
+            }, this);
           }
         }
         if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
           if (this.currentCu2ProgressBar != null) {
             this.currentCu2ProgressBar.timer.resume();
           } else {
-            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => { this.currentCu2ProgressBar = null, this.onionCut2.sprite.frame = 1, this.onionCut2.hasProcessed = true }, this);
+            this.currentCu2ProgressBar = new ProgressBar(this.game, 540, WindowHeight - 60, 100, 15, 50, 100, () => {
+              this.currentCu2ProgressBar = null;
+              if (this.onionCut2.sprite.visible) {
+                this.onionCut2.sprite.frame = 1;
+              }
+              else if (this.tomatoCut2.sprite.visible) {
+                this.tomatoCut2.sprite.frame = 1;
+              }
+              else if (this.mushroomCut2.sprite.visible) {
+                this.mushroomCut2.sprite.frame = 1;
+              }
+            }, this);
           }
         }
         if (Phaser.Rectangle.contains(this.washRect, target.sprite.x, target.sprite.y)) {
@@ -375,25 +406,39 @@ class MainGame extends Phaser.State {
             target.isPlate = true;
             target.holdingObject = "Plate";
           }
-          else if (this.plateImg.frame = 1){
+          else if (this.plateImg.frame = 1) {
             target.isHolding = true;
             this.plateImg.destroy();
             target.isPlate = true;
             target.holdingObject = "onionPlate";
           }
+          else if (this.plateImg.frame = 2) {
+            target.isHolding = true;
+            this.plateImg.destroy();
+            target.isPlate = true;
+            target.holdingObject = "mushroomPlate";
+          }
+          else if (this.plateImg.frame = 3) {
+            target.isHolding = true;
+            this.plateImg.destroy();
+            target.isPlate = true;
+            target.holdingObject = "tomatoPlate";
+          }
         }
         else if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
-          if (this.potImg.frame != 3) {
+          if (this.potImg.frame == 3 || this.potImg.frame == 6 || this.potImg.frame == 9) {
             target.isHolding = true;
             this.potImg.visible = false;
             target.isPot = true;
-            target.holdingObject = "Pot";
+            if (this.potImg.frame == 3) target.holdingObject = "onionPot";
+            else if (this.potImg.frame == 6) target.holdingObject = "tomatoPot";
+            else if (this.potImg.frame == 9) target.holdingObject = "mushroomPot";
           }
           else {
             target.isHolding = true;
             this.potImg.visible = false;
             target.isPot = true;
-            target.holdingObject = "cookedPot";
+            target.holdingObject = "Pot";
           }
         }
         else if (Phaser.Rectangle.contains(this.mushroomRect, target.sprite.x, target.sprite.y)) {
@@ -415,20 +460,74 @@ class MainGame extends Phaser.State {
           if (this.onionCut1.sprite.visible) {
             target.isHolding = true;
             target.isOnion = true;
-            target.holdingObject = "cuttingOnion";
             this.onionCut1.sprite.visible = false;
-            this.onionCut1.sprite.frame = 0;
+            if (this.onionCut1.sprite.frame == 1) {
+              target.holdingObject = "cuttingOnion";
+            }
+            else {
+              target.holdingObject = "Onion";
+            }
+          }
+          else if (this.mushroomCut1.sprite.visible) {
+            target.isHolding = true;
+            target.isMushroom = true;
+            this.mushroomCut1.sprite.visible = false;
+            if (this.mushroomCut1.sprite.frame == 1) {
+              target.holdingObject = "cuttingMushroom";
+            }
+            else {
+              target.holdingObject = "Mushroom";
+            }
+          }
+          else if (this.tomatoCut1.sprite.visible) {
+            target.isHolding = true;
+            target.isTomato = true;
+            this.tomatoCut1.sprite.visible = false;
+            if (this.tomatoCut1.sprite.frame == 1) {
+              target.holdingObject = "cuttingTomato";
 
+            }
+            else {
+              target.holdingObject = "Tomato";
+            }
           }
         }
         else if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
           if (this.onionCut2.sprite.visible) {
             target.isHolding = true;
             target.isOnion = true;
-            target.holdingObject = "cuttingOnion";
             this.onionCut2.sprite.visible = false;
-            this.onionCut2.sprite.frame = 0;
+            if (this.onionCut2.sprite.frame == 1) {
+              target.holdingObject = "cuttingOnion";
+            }
+            else {
+              target.holdingObject = "Onion";
+            }
           }
+          else if (this.mushroomCut2.sprite.visible) {
+            target.isHolding = true;
+            target.isMushroom = true;
+            this.mushroomCut2.sprite.visible = false;
+            if (this.mushroomCut2.sprite.frame == 1) {
+              target.holdingObject = "cuttingMushroom";
+            }
+            else {
+              target.holdingObject = "Mushroom";
+            }
+          }
+          else if (this.tomatoCut2.sprite.visible) {
+            target.isHolding = true;
+            target.isTomato = true;
+            this.tomatoCut2.sprite.visible = false;
+            if (this.tomatoCut2.sprite.frame == 1) {
+              target.holdingObject = "cuttingTomato";
+
+            }
+            else {
+              target.holdingObject = "Tomato";
+            }
+          }
+
         }
       }
     }
@@ -443,6 +542,18 @@ class MainGame extends Phaser.State {
               target.clearAllFlag(true);
               break;
             }
+            else if (target.holdingObject === 'tomatoPlate' && menu.type === 'tomato') {
+              SocketConnector.deleteMenu(menu);
+              menu.delete();
+              target.clearAllFlag(true);
+              break;
+            }
+            else if (target.holdingObject === 'mushroomPlate' && menu.type === 'mashroom') {
+              SocketConnector.deleteMenu(menu);
+              menu.delete();
+              target.clearAllFlag(true);
+              break;
+            }
           }
         }
       }
@@ -450,6 +561,9 @@ class MainGame extends Phaser.State {
       if (Phaser.Rectangle.contains(this.garbageRect, target.sprite.x, target.sprite.y) && controlMes === 'press X') {
         console.log('dfasf')
         target.clearAllFlag();
+        if(target.isPot){
+          this.potImg.frame = 0;
+        }
       }
 
       if (target.isOnion) {
@@ -469,28 +583,47 @@ class MainGame extends Phaser.State {
           if (target.holdingObject != "cuttingOnion") {
             if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
               target.isHolding = !target.isHolding;
-              target.holdingObject = null;
               this.onionCut1.sprite.frame = 0;
               this.onionCut1.sprite.visible = true;
               target.isOnion = false;
             }
             if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
               target.isHolding = !target.isHolding;
-              target.holdingObject = null;
               this.onionCut2.sprite.frame = 0;
               this.onionCut2.sprite.visible = true;
               target.isOnion = false;
             }
           }
           else {
-            if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
               target.isHolding = !target.isHolding;
+              this.onionCut1.sprite.frame = 1;
+              this.onionCut1.sprite.visible = true;
               target.isOnion = false;
-              target.holdingObject = null;
-              if (this.potImg.frame < 2) {
-                this.potImg.frame += 1;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.onionCut2.sprite.frame = 1;
+              this.onionCut2.sprite.visible = true;
+              target.isOnion = false;
+            }
+            if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+              if (this.potImg.frame == 0) {
+                target.isHolding = !target.isHolding;
+                target.isOnion = false;
+                target.holdingObject = null;
+                this.potImg.frame = 1;
               }
-              else {
+              else if (this.potImg.frame == 1) {
+                target.isHolding = !target.isHolding;
+                target.isOnion = false;
+                target.holdingObject = null;
+                this.potImg.frame = 2;
+              }
+              else if (this.potImg.frame == 2) {
+                target.isHolding = !target.isHolding;
+                target.isOnion = false;
+                target.holdingObject = null;
                 this.potImg.frame = 3;
                 if (this.currentPotProgressBar != null) {
                   this.currentPotProgressBar.timer.resume();
@@ -499,9 +632,6 @@ class MainGame extends Phaser.State {
                 }
               }
             }
-          }
-          if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
-
           }
         }
       }
@@ -519,11 +649,58 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
-          if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
+          if (target.holdingObject != "cuttingTomato") {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.tomatoCut1.sprite.frame = 0;
+              this.tomatoCut1.sprite.visible = true;
+              target.isTomato = false;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.tomatoCut2.sprite.frame = 0;
+              this.tomatoCut2.sprite.visible = true;
+              target.isTomato = false;
+            }
           }
-          if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
+          else {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.tomatoCut1.sprite.frame = 1;
+              this.tomatoCut1.sprite.visible = true;
+              target.isTomato = false;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.tomatoCut2.sprite.frame = 1;
+              this.tomatoCut2.sprite.visible = true;
+              target.isTomato = false;
+            }
+            if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+              if (this.potImg.frame == 0) {
+                target.isHolding = !target.isHolding;
+                target.isTomato = false;
+                target.holdingObject = null;
+                this.potImg.frame = 4;
+              }
+              else if (this.potImg.frame == 4) {
+                target.isHolding = !target.isHolding;
+                target.isTomato = false;
+                target.holdingObject = null;
+                this.potImg.frame = 5;
+              }
+              else if (this.potImg.frame == 5) {
+                target.isHolding = !target.isHolding;
+                target.isTomato = false;
+                target.holdingObject = null;
+                this.potImg.frame = 6;
+                if (this.currentPotProgressBar != null) {
+                  this.currentPotProgressBar.timer.resume();
+                } else {
+                  this.currentPotProgressBar = new ProgressBar(this.game, 755, 150, 100, 15, 50, 100, () => { this.currentPotProgressBar = null }, this);
+                }
+              }
+            }
           }
         }
       }
@@ -541,16 +718,60 @@ class MainGame extends Phaser.State {
         } else if (controlMes === 'stop Y') {
           target.sprite.animations.stop(null, true);
         } else if (controlMes === 'press Space') {
-
-          if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
+          if (target.holdingObject != "cuttingMushroom") {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.mushroomCut1.sprite.frame = 0;
+              this.mushroomCut1.sprite.visible = true;
+              target.isMushroom = false;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.mushroomCut2.sprite.frame = 0;
+              this.mushroomCut2.sprite.visible = true;
+              target.isMushroom = false;
+            }
           }
-          if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
-            target.isHolding = !target.isHolding;
+          else {
+            if (Phaser.Rectangle.contains(this.cut1Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.mushroomCut1.sprite.frame = 1;
+              this.mushroomCut1.sprite.visible = true;
+              target.isMushroom = false;
+            }
+            if (Phaser.Rectangle.contains(this.cut2Rect, target.sprite.x, target.sprite.y)) {
+              target.isHolding = !target.isHolding;
+              this.mushroomCut2.sprite.frame = 1;
+              this.mushroomCut2.sprite.visible = true;
+              target.isMushroom = false;
+            }
+            if (Phaser.Rectangle.contains(this.potRect, target.sprite.x, target.sprite.y)) {
+              if (this.potImg.frame == 0) {
+                target.isHolding = !target.isHolding;
+                target.isMushroom = false;
+                target.holdingObject = null;
+                this.potImg.frame = 7;
+              }
+              else if (this.potImg.frame == 7) {
+                target.isHolding = !target.isHolding;
+                target.isMushroom = false;
+                target.holdingObject = null;
+                this.potImg.frame = 8;
+              }
+              else if (this.potImg.frame == 8) {
+                target.isHolding = !target.isHolding;
+                target.isMushroom = false;
+                target.holdingObject = null;
+                this.potImg.frame = 9;
+                if (this.currentPotProgressBar != null) {
+                  this.currentPotProgressBar.timer.resume();
+                } else {
+                  this.currentPotProgressBar = new ProgressBar(this.game, 755, 150, 100, 15, 50, 100, () => { this.currentPotProgressBar = null }, this);
+                }
+              }
+            }
           }
-
         }
-
       }
       else if (target.isPot) {
         if (controlMes === 'go Left') {
@@ -573,10 +794,21 @@ class MainGame extends Phaser.State {
             target.isPot = false;
           }
           if (this.game.physics.arcade.overlap(this.plateImg, target.sprite)) {
-            if (target.holdingObject == "cookedPot") {
+            if (target.holdingObject == "onionPot") {
               target.holdingObject = "Pot";
               this.potImg.frame = 0;
               this.plateImg.frame = 1;
+
+            }
+            else if (target.holdingObject == "tomatoPot") {
+              target.holdingObject = "Pot";
+              this.potImg.frame = 0;
+              this.plateImg.frame = 3;
+            }
+            else if (target.holdingObject == "mushroomPot") {
+              target.holdingObject = "Pot";
+              this.potImg.frame = 0;
+              this.plateImg.frame = 2;
 
             }
           }
