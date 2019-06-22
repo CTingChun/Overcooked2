@@ -14,7 +14,7 @@ firebase.initializeApp({
 var game = new Phaser.Game(WindowWidth, WindowHeight, Phaser.AUTO);
 
 // Add Socket to Game
-game.socket = io('http://34.80.102.213:8000/Hall');
+game.socket = io('https://final-project-team31.herokuapp.com/Hall');
 
 // Add Game State
 game.state.add('Menu', new Menu());
