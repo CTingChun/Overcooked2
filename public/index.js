@@ -14,8 +14,7 @@ firebase.initializeApp({
 var game = new Phaser.Game(WindowWidth, WindowHeight, Phaser.AUTO);
 
 // Add Socket to Game
-game.socket = io('http://localhost:80/Hall');
-game.socket = io('http://192.168.50.133:80/Hall');
+game.socket = io('http://34.80.102.213:80/Hall');
 
 // Add Game State
 game.state.add('Menu', new Menu());
