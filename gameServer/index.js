@@ -5,6 +5,8 @@ var Room = require('./Room');
 // Create A Server
 var io = require('socket.io')(8000);
 
+io.set('origins', '*:*');
+
 // Middleware
 
 // Create Hall
